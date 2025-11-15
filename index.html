@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ulas Bakery Equipment And Supplies - Quality bakery equipment and supplies in Mindanao. 10 years of trusted service, repairs, customization, and flexible payment options.">
+    <title>Ulas Bakery Equipment And Supplies | Quality Bakery Equipment in Mindanao</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-bread-slice"></i>
+                <span>U-BEST</span>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search for products, equipment, supplies...">
+                <button type="button" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="header-actions">
+                <button class="cart-btn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <button class="auth-btn" id="authBtn">
+                    <i class="fas fa-user"></i>
+                    <span>Sign In</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Header -->
+    <nav class="nav-header">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#equipment"><i class="fas fa-industry"></i> Bakery Equipment</a></li>
+                <li><a href="#deals"><i class="fas fa-tag"></i> Deals</a></li>
+                <li><a href="#new-arrivals"><i class="fas fa-star"></i> New Arrivals</a></li>
+                <li><a href="#repair"><i class="fas fa-tools"></i> Repair / Customize</a></li>
+                <li><a href="#help"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                <li class="nav-item-dropdown">
+                    <a href="javascript:void(0)" id="aboutUsToggle"><i class="fas fa-info-circle"></i> About Us <i class="fas fa-chevron-down"></i></a>
+                    <div class="about-dropdown">
+                        <div class="about-dropdown-content">
+                            <div class="about-header">
+                                <i class="fas fa-store"></i>
+                                <h3>U-BEST</h3>
+                                <p class="about-tagline">Ulas Bakery Equipment And Supplies is BEST for You!</p>
+                            </div>
+                            
+                            <div class="about-body">
+                                <div class="about-section">
+                                    <h4><i class="fas fa-award"></i> Our Story</h4>
+                                    <p>Since 2013, Ulas Bakery Equipment And Supplies (U-BEST) has been the trusted partner for bakery businesses across Mindanao. With over <strong>10 years of dedicated service</strong>, we've helped hundreds of entrepreneurs transform their baking dreams into successful realities.</p>
+                                </div>
+                                
+                                <div class="about-section">
+                                    <h4><i class="fas fa-bullseye"></i> Our Mission</h4>
+                                    <p>To empower every aspiring and existing bakery entrepreneur with high-quality, tested equipment and supplies at affordable prices, backed by flexible payment options and exceptional customer service.</p>
+                                </div>
+                                
+                                <div class="about-section">
+                                    <h4><i class="fas fa-check-double"></i> What Makes Us Different</h4>
+                                    <ul class="about-features">
+                                        <li><i class="fas fa-certificate"></i> <strong>Quality Assurance:</strong> All equipment is thoroughly tested before delivery</li>
+                                        <li><i class="fas fa-hand-holding-usd"></i> <strong>Pautang Packages:</strong> Flexible installment plans for startups with limited budgets</li>
+                                        <li><i class="fas fa-tools"></i> <strong>Repair & Customization:</strong> Expert technical support and equipment modification services</li>
+                                        <li><i class="fas fa-shipping-fast"></i> <strong>Island-wide Delivery:</strong> We deliver to all major cities across Mindanao</li>
+                                        <li><i class="fas fa-headset"></i> <strong>24/7 Support:</strong> Always available to answer your questions and concerns</li>
+                                        <li><i class="fas fa-user-friends"></i> <strong>Expert Guidance:</strong> Free consultation to help you choose the right equipment</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="about-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <div class="stat-number">10+</div>
+                                        <div class="stat-label">Years in Business</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-users"></i>
+                                        <div class="stat-number">500+</div>
+                                        <div class="stat-label">Happy Clients</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-star"></i>
+                                        <div class="stat-number">4.8/5</div>
+                                        <div class="stat-label">Customer Rating</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-box"></i>
+                                        <div class="stat-number">1000+</div>
+                                        <div class="stat-label">Products Available</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="about-cta">
+                                    <p><strong>Ready to start your bakery business?</strong></p>
+                                    <p>Whether you're just starting out or expanding your operations, we have the perfect equipment package for you. Contact us today and let's build your success story together!</p>
+                                    <div class="about-cta-buttons">
+                                        <a href="#help" class="btn-small btn-primary"><i class="fas fa-phone"></i> Contact Us</a>
+                                        <a href="#new-arrivals" class="btn-small btn-secondary"><i class="fas fa-shopping-cart"></i> Shop Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <button class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Start Your Pastry Business Today</h1>
+                <p class="hero-description">
+                    Do you need new equipment for your bakery business? Or just starting and looking for dependable supplies? 
+                    Don't have a budget? <strong>U-BEST is BEST for you!</strong>
+                </p>
+                <p class="hero-description">
+                    We provide you the best quality with <strong>10 Years in the Business</strong>. We also Repair and Customize Equipment, 
+                    Delivering Everywhere in Mindanao. <strong>We Offer Pautang Business Packages</strong> to help you get started!
+                </p>
+                
+                <div class="hero-features">
+                    <div class="feature-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Quality</h3>
+                        <p>Tested Appliances</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-shipping-fast"></i>
+                        <h3>Shipping Fee</h3>
+                        <p>Affordable</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-credit-card"></i>
+                        <h3>Payment Method</h3>
+                        <p>Secure System</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-headset"></i>
+                        <h3>Online Support</h3>
+                        <p>Available 24/7</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>100% Secure</h3>
+                        <p>Shipping</p>
+                    </div>
+                </div>
+
+                <div class="hero-cta">
+                    <button class="btn btn-primary">Shop Now</button>
+                    <button class="btn btn-secondary">Contact Us</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop By Category Section -->
+    <section id="equipment" class="categories-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Shop By Category</h2>
+                <p>Find everything you need for your bakery business</p>
+            </div>
+
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-blender"></i>
+                    </div>
+                    <h3>Baking Machines & Bakery Equipment</h3>
+                    <p>Industrial ovens, mixers, dough sheeters, and professional baking machines for commercial use.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Preparation & Processing Tools</h3>
+                    <p>Cutting boards, knives, food processors, and essential tools for efficient food preparation.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <h3>Measuring & Weighing Tools</h3>
+                    <p>Digital scales, measuring cups, thermometers, and precision tools for accurate baking.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>Gas & Power Supply</h3>
+                    <p>LPG tanks, regulators, gas stoves, and reliable power equipment for your bakery operations.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <h3>Baking Trays & Storage</h3>
+                    <p>Sheet pans, cooling racks, storage containers, and organization solutions for your bakery.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>Utensils & Accessories</h3>
+                    <p>Spatulas, whisks, piping bags, decorating tools, and essential bakery accessories.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Ingredients & Raw Materials</h3>
+                    <p>Premium flour, sugar, yeast, flavoring, and quality ingredients for perfect baking results.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-spray-can"></i>
+                    </div>
+                    <h3>Cleaning & Maintenance Tools</h3>
+                    <p>Sanitizers, cleaning supplies, maintenance kits, and hygiene products for food safety.</p>
+                    <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section id="new-arrivals" class="new-arrivals-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>New Arrivals</h2>
+                <p>Check out our latest products and equipment</p>
+            </div>
+
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-badge new">NEW</div>
+                    <div class="product-image">
+                        <i class="fas fa-cookie-bite"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3>Industrial Deck Oven</h3>
+                        <p class="product-description">Professional 3-deck gas oven with digital temperature control</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>(4.5)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">₱85,000</span>
+                            <span class="old-price">₱95,000</span>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-badge new">NEW</div>
+                    <div class="product-image">
+                        <i class="fas fa-blender"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3>20L Planetary Mixer</h3>
+                        <p class="product-description">Heavy-duty mixer with 3 speed settings and stainless bowl</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>(5.0)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">₱32,500</span>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-badge hot">HOT</div>
+                    <div class="product-image">
+                        <i class="fas fa-bread-slice"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3>Dough Sheeter Machine</h3>
+                        <p class="product-description">Automatic dough roller with adjustable thickness settings</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>(4.0)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">₱45,000</span>
+                            <span class="old-price">₱52,000</span>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-badge new">NEW</div>
+                    <div class="product-image">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3>Proofer Cabinet</h3>
+                        <p class="product-description">16-tray capacity with humidity and temperature control</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>(4.6)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">₱38,000</span>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-badge sale">SALE</div>
+                    <div class="product-image">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3>Digital Platform Scale</h3>
+                        <p class="product-description">Heavy-duty 150kg capacity with LCD display</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>(4.8)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">₱5,500</span>
+                            <span class="old-price">₱7,200</span>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-badge new">NEW</div>
+                    <div class="product-image">
+                        <i class="fas fa-cookie"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3>Cookie Depositor Machine</h3>
+                        <p class="product-description">Automatic cookie forming with multiple nozzle options</p>
+                        <div class="product-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>(4.2)</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="price">₱28,000</span>
+                        </div>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-all-btn">
+                <button class="btn btn-outline">View All Products</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Customer Reviews Section -->
+    <section class="reviews-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Our Customers Say</h2>
+                <p>Trusted by bakery businesses across Mindanao</p>
+            </div>
+
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h4>Maria Santos</h4>
+                            <p>Davao City</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">
+                        "Excellent service! I bought a complete bakery package with their pautang option. 
+                        The equipment quality is superb and their technical support is always available. 
+                        My business is thriving because of Ulas!"
+                    </p>
+                    <span class="review-date">October 2025</span>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h4>Juan Dela Cruz</h4>
+                            <p>Cagayan de Oro</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">
+                        "Been buying from Ulas for 5 years now. Their repair and customization service saved 
+                        me thousands of pesos. Very reliable and honest business. Highly recommended!"
+                    </p>
+                    <span class="review-date">September 2025</span>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h4>Lisa Reyes</h4>
+                            <p>General Santos City</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="review-text">
+                        "As a startup bakery owner, their flexible payment terms helped me a lot. 
+                        Fast delivery to GenSan and the equipment came in perfect condition. Thank you Ulas!"
+                    </p>
+                    <span class="review-date">November 2025</span>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="reviewer-info">
+                            <h4>Robert Tan</h4>
+                            <p>Butuan City</p>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-text">
+                        "Best supplier in Mindanao! Competitive prices, quality products, and excellent customer service. 
+                        They even provided training on how to use the equipment properly. A+ service!"
+                    </p>
+                    <span class="review-date">October 2025</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visit Us Today Section -->
+    <section id="about" class="location-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Visit Us Today</h2>
+                <p>Serving bakery businesses across Mindanao</p>
+            </div>
+
+            <div class="location-content">
+                <div class="location-map">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.2556!2d125.5427398!3d7.0542956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f90d42eaa70f67%3A0x37920abfb0aabddd!2sUlas%20Bakery%20Equipment%20And%20Supplies!5e0!3m2!1sen!2sph!4v1700000000000" 
+                        width="100%" 
+                        height="450" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+
+                <div class="location-info">
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Main Store</h4>
+                            <p>Davao City, Mindanao, Philippines</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Business Hours</h4>
+                            <p>Monday - Saturday: 8:00 AM - 6:00 PM</p>
+                            <p>Sunday: 9:00 AM - 4:00 PM</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="fas fa-truck"></i>
+                        <div>
+                            <h4>Delivery Areas</h4>
+                            <p>We deliver across all major cities in Mindanao including Davao, CDO, GenSan, Butuan, Zamboanga, Iligan, and more!</p>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <i class="fas fa-award"></i>
+                        <div>
+                            <h4>Our Promise</h4>
+                            <p>10 Years of Quality Service | Tested Equipment | Flexible Payment Terms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us Section -->
+    <section id="help" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact Us</h2>
+                <p>We're here to help you grow your bakery business</p>
+            </div>
+
+            <div class="contact-content">
+                <div class="contact-cards">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <h3>Phone</h3>
+                        <p>0949 703 9472</p>
+                        <p>Available 24/7</p>
+                        <a href="tel:+639497039472" class="contact-link">Call Now</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fab fa-facebook"></i>
+                        </div>
+                        <h3>Facebook</h3>
+                        <p>Ulas Bakery Equipment</p>
+                        <p>Message us anytime</p>
+                        <a href="https://www.facebook.com/profile.php?id=100057351553663" class="contact-link" target="_blank">Visit Page</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email</h3>
+                        <p>ubeas2013@gmail.com</p>
+                        <p>Quick Response Guaranteed</p>
+                        <a href="mailto:ubeas2013@gmail.com" class="contact-link">Send Email</a>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h3>Our Shop</h3>
+                        <p>Davao City, Mindanao</p>
+                        <p>Visit our showroom</p>
+                        <a href="#about" class="contact-link">Get Directions</a>
+                    </div>
+                </div>
+
+                <div class="contact-form-wrapper">
+                    <h3>Get In Touch</h3>
+                    <p class="form-description">Have questions? Send us a message and we'll respond within 24 hours!</p>
+                    
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+63 912 345 6789">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="inquiry">Product Inquiry</option>
+                                <option value="quote">Request Quote</option>
+                                <option value="pautang">Pautang Package</option>
+                                <option value="repair">Repair Service</option>
+                                <option value="delivery">Delivery Information</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="5" required placeholder="Tell us how we can help you..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Ulas Bakery Equipment</h3>
+                    <p>With over 10 years of experience, we provide quality bakery equipment and supplies to businesses across Mindanao. Our mission is to help you succeed with reliable products, flexible payment options, and excellent service.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/profile.php?id=100057351553663" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="mailto:ubeas2013@gmail.com"><i class="fas fa-envelope"></i></a>
+                        <a href="tel:+639497039472"><i class="fas fa-phone"></i></a>
+                        <a href="https://www.google.com/maps/place/Ulas+Bakery+Equipment+And+Supplies/@7.0542956,125.5427398,17z" target="_blank"><i class="fas fa-map-marker-alt"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#equipment">Products</a></li>
+                        <li><a href="#new-arrivals">New Arrivals</a></li>
+                        <li><a href="#repair">Repair Services</a></li>
+                        <li><a href="#about">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">Shipping Information</a></li>
+                        <li><a href="#">Payment Options</a></li>
+                        <li><a href="#">Pautang Package</a></li>
+                        <li><a href="#">Warranty & Returns</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to get updates on new products and special offers!</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Ulas Bakery Equipment And Supplies. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>
