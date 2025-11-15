@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User Dashboard - Ulas Bakery Equipment And Supplies">
+    <title>My Dashboard | U-BEST</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="shop.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <i class="fas fa-bread-slice"></i>
+                    <span>U-BEST</span>
+                </a>
+            </div>
+            
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-menu">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name" id="headerUserName">Guest User</span>
+                            <span class="user-role">Customer</span>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-question-circle"></i> Help Center
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="index.html" class="dropdown-item" id="signOutLink">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="dashboard-sidebar">
+            <nav class="sidebar-nav">
+                <a href="#shop" class="nav-item active" data-section="shop">
+                    <i class="fas fa-store"></i>
+                    <span>Shop</span>
+                </a>
+                <a href="#categories" class="nav-item" data-section="categories">
+                    <i class="fas fa-th"></i>
+                    <span>Categories</span>
+                </a>
+                <a href="#cart" class="nav-item" data-section="cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span class="nav-badge cart-badge">0</span>
+                </a>
+                <a href="#orders" class="nav-item" data-section="orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>My Orders</span>
+                    <span class="nav-badge">3</span>
+                </a>
+                <a href="#wishlist" class="nav-item" data-section="wishlist">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                    <span class="nav-badge">5</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#overview" class="nav-item" data-section="overview">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#profile" class="nav-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#addresses" class="nav-item" data-section="addresses">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Addresses</span>
+                </a>
+                <a href="#payment" class="nav-item" data-section="payment">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payment Methods</span>
+                </a>
+                <a href="#support" class="nav-item" data-section="support">
+                    <i class="fas fa-headset"></i>
+                    <span>Support Tickets</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Shop Section -->
+            <section id="shop-section" class="content-section active">
+                <div class="section-header">
+                    <h1>Browse Products</h1>
+                    <p>Discover our premium bakery equipment and supplies</p>
+                </div>
+
+                <div class="shop-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="productSearch" placeholder="Search products...">
+                    </div>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="all">All Categories</option>
+                        <option value="baking-machines">Baking Machines & Bakery Equipment</option>
+                        <option value="preparation-tools">Preparation & Processing Tools</option>
+                        <option value="measuring-tools">Measuring & Weighing Tools</option>
+                        <option value="gas-power">Gas & Power Supply</option>
+                        <option value="trays-storage">Baking Trays & Storage</option>
+                        <option value="utensils">Utensils & Accessories</option>
+                        <option value="ingredients">Ingredients & Raw Materials</option>
+                        <option value="cleaning">Cleaning & Maintenance Tools</option>
+                    </select>
+                    <select id="sortFilter" class="filter-select">
+                        <option value="featured">Featured</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A-Z</option>
+                    </select>
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded here dynamically -->
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories-section" class="content-section">
+                <div class="section-header">
+                    <h1>Product Categories</h1>
+                    <p>Explore equipment by category</p>
+                </div>
+
+                <div class="categories-grid">
+                    <div class="category-card" data-category="baking-machines">
+                        <div class="category-icon">
+                            <i class="fas fa-blender"></i>
+                        </div>
+                        <h3>Baking Machines & Bakery Equipment</h3>
+                        <p>Industrial ovens, mixers, dough sheeters, and professional baking machines for commercial use.</p>
+                        <span class="item-count">25 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="preparation-tools">
+                        <div class="category-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <h3>Preparation & Processing Tools</h3>
+                        <p>Cutting boards, knives, food processors, and essential tools for efficient food preparation.</p>
+                        <span class="item-count">18 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="measuring-tools">
+                        <div class="category-icon">
+                            <i class="fas fa-weight"></i>
+                        </div>
+                        <h3>Measuring & Weighing Tools</h3>
+                        <p>Digital scales, measuring cups, thermometers, and precision tools for accurate baking.</p>
+                        <span class="item-count">12 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="gas-power">
+                        <div class="category-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h3>Gas & Power Supply</h3>
+                        <p>LPG tanks, regulators, gas stoves, and reliable power equipment for your bakery operations.</p>
+                        <span class="item-count">8 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="trays-storage">
+                        <div class="category-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <h3>Baking Trays & Storage</h3>
+                        <p>Sheet pans, cooling racks, storage containers, and organization solutions for your bakery.</p>
+                        <span class="item-count">22 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="utensils">
+                        <div class="category-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Utensils & Accessories</h3>
+                        <p>Spatulas, whisks, piping bags, decorating tools, and essential bakery accessories.</p>
+                        <span class="item-count">35 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="ingredients">
+                        <div class="category-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3>Ingredients & Raw Materials</h3>
+                        <p>Premium flour, sugar, yeast, flavoring, and quality ingredients for perfect baking results.</p>
+                        <span class="item-count">42 items</span>
+                    </div>
+
+                    <div class="category-card" data-category="cleaning">
+                        <div class="category-icon">
+                            <i class="fas fa-spray-can"></i>
+                        </div>
+                        <h3>Cleaning & Maintenance Tools</h3>
+                        <p>Sanitizers, cleaning supplies, maintenance kits, and hygiene products for food safety.</p>
+                        <span class="item-count">16 items</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cart Section -->
+            <section id="cart-section" class="content-section">
+                <div class="section-header">
+                    <h1>Shopping Cart</h1>
+                    <p>Review your items before checkout</p>
+                </div>
+
+                <div class="cart-container">
+                    <div class="cart-items" id="cartItems">
+                        <!-- Cart items will be loaded here -->
+                    </div>
+
+                    <div class="cart-summary">
+                        <h3>Order Summary</h3>
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="cartSubtotal">₱0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span id="cartShipping">Free</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (12%):</span>
+                            <span id="cartTax">₱0</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="cartTotal">₱0</span>
+                        </div>
+                        <button class="btn-checkout" id="checkoutBtn">
+                            <i class="fas fa-lock"></i> Proceed to Checkout
+                        </button>
+                        <button class="btn-continue-shopping" onclick="document.querySelector('[data-section=shop]').click()">
+                            <i class="fas fa-arrow-left"></i> Continue Shopping
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Overview Section -->
+            <section id="overview-section" class="content-section">
+                <div class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Welcome back! Here's what's happening with your account.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #FF6B35, #E55A2B);">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Orders</h3>
+                            <p class="stat-number">24</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 12% from last month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4ECDC4, #44B3AA);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Pending Orders</h3>
+                            <p class="stat-number">3</p>
+                            <span class="stat-change">
+                                <i class="fas fa-minus"></i> No change
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #FFE66D, #E5CC5D);">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Wishlist Items</h3>
+                            <p class="stat-number">5</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 2 new items
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4CAF50, #45A049);">
+                            <i class="fas fa-peso-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Spent</h3>
+                            <p class="stat-number">₱156,500</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 8% increase
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card recent-orders-card">
+                        <div class="card-header">
+                            <h2>Recent Orders</h2>
+                            <a href="#orders" class="view-all-link">View All</a>
+                        </div>
+                        <div class="orders-list">
+                            <div class="order-item">
+                                <div class="order-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="order-info">
+                                    <h4>Order #ORD-2025-001</h4>
+                                    <p>Belgian Double Waffle Maker</p>
+                                    <span class="order-date">November 10, 2025</span>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-badge status-shipping">Shipping</span>
+                                    <p class="order-price">₱28,500</p>
+                                </div>
+                            </div>
+
+                            <div class="order-item">
+                                <div class="order-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="order-info">
+                                    <h4>Order #ORD-2025-002</h4>
+                                    <p>3 in 1 Burger-Fryer-Steamer</p>
+                                    <span class="order-date">November 8, 2025</span>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-badge status-delivered">Delivered</span>
+                                    <p class="order-price">₱32,500</p>
+                                </div>
+                            </div>
+
+                            <div class="order-item">
+                                <div class="order-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="order-info">
+                                    <h4>Order #ORD-2025-003</h4>
+                                    <p>2 x 16 Siomai Steamer</p>
+                                    <span class="order-date">November 5, 2025</span>
+                                </div>
+                                <div class="order-status">
+                                    <span class="status-badge status-pending">Pending</span>
+                                    <p class="order-price">₱18,000</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h2>Quick Actions</h2>
+                        </div>
+                        <div class="quick-actions">
+                            <a href="#orders" class="action-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>New Order</span>
+                            </a>
+                            <a href="#support" class="action-btn">
+                                <i class="fas fa-headset"></i>
+                                <span>Get Support</span>
+                            </a>
+                            <a href="#addresses" class="action-btn">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Add Address</span>
+                            </a>
+                            <a href="#payment" class="action-btn">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Add Payment</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders-section" class="content-section">
+                <div class="section-header">
+                    <h1>My Orders</h1>
+                    <p>Track and manage all your orders</p>
+                </div>
+
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">All Orders</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="processing">Processing</button>
+                    <button class="filter-btn" data-filter="shipping">Shipping</button>
+                    <button class="filter-btn" data-filter="delivered">Delivered</button>
+                    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+                </div>
+
+                <div class="orders-grid">
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <div class="order-header-left">
+                                <h3>Order #ORD-2025-001</h3>
+                                <span class="order-date"><i class="fas fa-calendar"></i> November 10, 2025</span>
+                            </div>
+                            <span class="status-badge status-shipping">Shipping</span>
+                        </div>
+                        <div class="order-card-body">
+                            <div class="order-product">
+                                <img src="Photo/Belgian Double Waffle Maker.jpg" alt="Belgian Double Waffle Maker">
+                                <div class="product-details">
+                                    <h4>Belgian Double Waffle Maker</h4>
+                                    <p>Quantity: 1</p>
+                                    <p class="product-price">₱28,500</p>
+                                </div>
+                            </div>
+                            <div class="order-progress">
+                                <div class="progress-step completed">
+                                    <div class="step-icon"><i class="fas fa-check"></i></div>
+                                    <span>Order Placed</span>
+                                </div>
+                                <div class="progress-line completed"></div>
+                                <div class="progress-step completed">
+                                    <div class="step-icon"><i class="fas fa-check"></i></div>
+                                    <span>Processing</span>
+                                </div>
+                                <div class="progress-line active"></div>
+                                <div class="progress-step active">
+                                    <div class="step-icon"><i class="fas fa-truck"></i></div>
+                                    <span>Shipping</span>
+                                </div>
+                                <div class="progress-line"></div>
+                                <div class="progress-step">
+                                    <div class="step-icon"><i class="fas fa-box"></i></div>
+                                    <span>Delivered</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-card-footer">
+                            <div class="order-total">
+                                <span>Total Amount:</span>
+                                <strong>₱28,500</strong>
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn-outline btn-sm">
+                                    <i class="fas fa-map-marker-alt"></i> Track Order
+                                </button>
+                                <button class="btn-primary btn-sm">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <div class="order-header-left">
+                                <h3>Order #ORD-2025-002</h3>
+                                <span class="order-date"><i class="fas fa-calendar"></i> November 8, 2025</span>
+                            </div>
+                            <span class="status-badge status-delivered">Delivered</span>
+                        </div>
+                        <div class="order-card-body">
+                            <div class="order-product">
+                                <img src="Photo/3 in 1 Burger-Fryer-Steamer.jpg" alt="3 in 1 Burger-Fryer-Steamer">
+                                <div class="product-details">
+                                    <h4>3 in 1 Burger-Fryer-Steamer</h4>
+                                    <p>Quantity: 1</p>
+                                    <p class="product-price">₱32,500</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-card-footer">
+                            <div class="order-total">
+                                <span>Total Amount:</span>
+                                <strong>₱32,500</strong>
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn-outline btn-sm">
+                                    <i class="fas fa-star"></i> Rate Product
+                                </button>
+                                <button class="btn-primary btn-sm">
+                                    <i class="fas fa-redo"></i> Buy Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Wishlist Section -->
+            <section id="wishlist-section" class="content-section">
+                <div class="section-header">
+                    <h1>My Wishlist</h1>
+                    <p>Items you've saved for later</p>
+                </div>
+
+                <div class="wishlist-grid">
+                    <div class="wishlist-item">
+                        <button class="remove-wishlist"><i class="fas fa-times"></i></button>
+                        <div class="wishlist-image">
+                            <img src="Photo/Burger Griddle.jpg" alt="Burger Griddle">
+                        </div>
+                        <div class="wishlist-content">
+                            <h3>Burger Griddle</h3>
+                            <p>Professional griddle for burgers and grilled sandwiches</p>
+                            <div class="wishlist-price">
+                                <span class="price">₱22,000</span>
+                                <span class="availability in-stock">
+                                    <i class="fas fa-check-circle"></i> In Stock
+                                </span>
+                            </div>
+                            <button class="btn-primary btn-sm">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="wishlist-item">
+                        <button class="remove-wishlist"><i class="fas fa-times"></i></button>
+                        <div class="wishlist-image">
+                            <img src="Photo/2 x 16 Siomai Steamer.jpg" alt="2 x 16 Siomai Steamer">
+                        </div>
+                        <div class="wishlist-content">
+                            <h3>2 x 16 Siomai Steamer</h3>
+                            <p>Double-deck steamer with 16-basket capacity per deck</p>
+                            <div class="wishlist-price">
+                                <span class="price">₱18,000</span>
+                                <span class="availability in-stock">
+                                    <i class="fas fa-check-circle"></i> In Stock
+                                </span>
+                            </div>
+                            <button class="btn-primary btn-sm">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="wishlist-item">
+                        <button class="remove-wishlist"><i class="fas fa-times"></i></button>
+                        <div class="wishlist-image">
+                            <img src="Photo/Big Single Deep Fryer.jpg" alt="Big Single Deep Fryer">
+                        </div>
+                        <div class="wishlist-content">
+                            <h3>Big Single Deep Fryer</h3>
+                            <p>Large capacity deep fryer with temperature control</p>
+                            <div class="wishlist-price">
+                                <span class="price">₱15,500</span>
+                                <span class="availability low-stock">
+                                    <i class="fas fa-exclamation-triangle"></i> Low Stock
+                                </span>
+                            </div>
+                            <button class="btn-primary btn-sm">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section">
+                <div class="section-header">
+                    <h1>My Profile</h1>
+                    <p>Manage your account information</p>
+                </div>
+
+                <div class="profile-container">
+                    <div class="profile-sidebar">
+                        <div class="profile-avatar-section">
+                            <div class="avatar-large">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <h3 id="profileUserName">Guest User</h3>
+                            <p id="profileUserEmail">guest@example.com</p>
+                            <button class="btn-outline btn-sm">
+                                <i class="fas fa-camera"></i> Change Photo
+                            </button>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="profile-stat">
+                                <i class="fas fa-shopping-bag"></i>
+                                <div>
+                                    <strong>24</strong>
+                                    <span>Orders</span>
+                                </div>
+                            </div>
+                            <div class="profile-stat">
+                                <i class="fas fa-star"></i>
+                                <div>
+                                    <strong>12</strong>
+                                    <span>Reviews</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-main">
+                        <form class="profile-form" id="profileForm">
+                            <h2>Personal Information</h2>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Full Name *</label>
+                                    <input type="text" id="profileName" placeholder="Enter your full name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address *</label>
+                                    <input type="email" id="profileEmail" placeholder="your.email@example.com" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Phone Number *</label>
+                                    <input type="tel" id="profilePhone" placeholder="+63 912 345 6789" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" id="profileDOB">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Business Name (Optional)</label>
+                                <input type="text" id="profileBusiness" placeholder="Your bakery business name">
+                            </div>
+
+                            <h2 style="margin-top: 30px;">Change Password</h2>
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" id="currentPassword" placeholder="Enter current password">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="newPassword" placeholder="Enter new password">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm New Password</label>
+                                    <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-outline">Cancel</button>
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Addresses Section -->
+            <section id="addresses-section" class="content-section">
+                <div class="section-header">
+                    <h1>My Addresses</h1>
+                    <p>Manage your saved addresses</p>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> Add New Address
+                    </button>
+                </div>
+
+                <div class="addresses-grid">
+                    <div class="address-card default-address">
+                        <div class="address-badge">Default</div>
+                        <div class="address-header">
+                            <h3><i class="fas fa-home"></i> Home</h3>
+                            <div class="address-actions-menu">
+                                <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="address-body">
+                            <p class="address-name">Juan Dela Cruz</p>
+                            <p class="address-line">123 Bakery Street, Poblacion District</p>
+                            <p class="address-line">Davao City, 8000</p>
+                            <p class="address-phone"><i class="fas fa-phone"></i> +63 912 345 6789</p>
+                        </div>
+                        <div class="address-footer">
+                            <button class="btn-text">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-text text-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="address-card">
+                        <div class="address-header">
+                            <h3><i class="fas fa-briefcase"></i> Business</h3>
+                            <div class="address-actions-menu">
+                                <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="address-body">
+                            <p class="address-name">Juan's Bakery Shop</p>
+                            <p class="address-line">456 Commerce Ave, Business District</p>
+                            <p class="address-line">Davao City, 8000</p>
+                            <p class="address-phone"><i class="fas fa-phone"></i> +63 923 456 7890</p>
+                        </div>
+                        <div class="address-footer">
+                            <button class="btn-text">
+                                <i class="fas fa-check"></i> Set as Default
+                            </button>
+                            <button class="btn-text">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-text text-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="address-card add-address-card">
+                        <div class="add-address-content">
+                            <i class="fas fa-plus-circle"></i>
+                            <h3>Add New Address</h3>
+                            <p>Click to add a new delivery address</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payment Methods Section -->
+            <section id="payment-section" class="content-section">
+                <div class="section-header">
+                    <h1>Payment Methods</h1>
+                    <p>Manage your payment options</p>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> Add Payment Method
+                    </button>
+                </div>
+
+                <div class="payment-grid">
+                    <div class="payment-card default-payment">
+                        <div class="payment-badge">Default</div>
+                        <div class="payment-header">
+                            <i class="fab fa-cc-visa payment-brand"></i>
+                            <div class="payment-actions-menu">
+                                <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="payment-body">
+                            <h3>Visa ending in 4242</h3>
+                            <p>Expires 12/2026</p>
+                            <p class="cardholder-name">Juan Dela Cruz</p>
+                        </div>
+                        <div class="payment-footer">
+                            <button class="btn-text">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-text text-danger">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="payment-card">
+                        <div class="payment-header">
+                            <i class="fas fa-wallet payment-brand" style="color: #00B4FF;"></i>
+                            <div class="payment-actions-menu">
+                                <button class="menu-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        <div class="payment-body">
+                            <h3>GCash</h3>
+                            <p>+63 912 345 6789</p>
+                            <p class="cardholder-name">Verified Account</p>
+                        </div>
+                        <div class="payment-footer">
+                            <button class="btn-text">
+                                <i class="fas fa-check"></i> Set as Default
+                            </button>
+                            <button class="btn-text text-danger">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="payment-card add-payment-card">
+                        <div class="add-payment-content">
+                            <i class="fas fa-plus-circle"></i>
+                            <h3>Add Payment Method</h3>
+                            <p>Add a credit card or e-wallet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Support Tickets Section -->
+            <section id="support-section" class="content-section">
+                <div class="section-header">
+                    <h1>Support Tickets</h1>
+                    <p>View and manage your support requests</p>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> Create New Ticket
+                    </button>
+                </div>
+
+                <div class="tickets-list">
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <div>
+                                <h3>Ticket #SUP-001</h3>
+                                <span class="ticket-category">
+                                    <i class="fas fa-tag"></i> Delivery Inquiry
+                                </span>
+                            </div>
+                            <span class="status-badge status-pending">Open</span>
+                        </div>
+                        <div class="ticket-body">
+                            <h4>Question about delivery time</h4>
+                            <p>I would like to know the estimated delivery time for my recent order to General Santos City...</p>
+                            <div class="ticket-meta">
+                                <span><i class="fas fa-calendar"></i> November 12, 2025</span>
+                                <span><i class="fas fa-comment"></i> 3 replies</span>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <button class="btn-outline btn-sm">
+                                <i class="fas fa-eye"></i> View Ticket
+                            </button>
+                            <button class="btn-primary btn-sm">
+                                <i class="fas fa-reply"></i> Reply
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ticket-card">
+                        <div class="ticket-header">
+                            <div>
+                                <h3>Ticket #SUP-002</h3>
+                                <span class="ticket-category">
+                                    <i class="fas fa-tag"></i> Technical Support
+                                </span>
+                            </div>
+                            <span class="status-badge status-delivered">Resolved</span>
+                        </div>
+                        <div class="ticket-body">
+                            <h4>Need help with product installation</h4>
+                            <p>Can you provide guidance on how to properly install the waffle maker? I want to make sure I set it up correctly...</p>
+                            <div class="ticket-meta">
+                                <span><i class="fas fa-calendar"></i> November 5, 2025</span>
+                                <span><i class="fas fa-comment"></i> 5 replies</span>
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <button class="btn-outline btn-sm">
+                                <i class="fas fa-eye"></i> View Ticket
+                            </button>
+                            <button class="btn-text">
+                                <i class="fas fa-star"></i> Rate Support
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script src="shop.js"></script>
+</body>
+</html>

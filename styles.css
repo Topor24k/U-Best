@@ -40,6 +40,37 @@ body {
     overflow-x: hidden;
 }
 
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-bg);
+    border-left: 1px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-color), var(--primary-dark));
+    border-radius: 10px;
+    border: 2px solid var(--light-bg);
+    transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-dark), var(--primary-color));
+    border: 2px solid var(--white);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--light-bg);
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -164,22 +195,45 @@ a {
 .auth-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--primary-color);
-    color: var(--white);
-    border: none;
-    padding: 12px 20px;
-    border-radius: 25px;
+    gap: 10px;
+    background: var(--light-bg);
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+    padding: 10px 18px;
+    border-radius: 10px;
     cursor: pointer;
     font-family: 'Poppins', sans-serif;
-    font-weight: 500;
     transition: var(--transition);
 }
 
 .auth-btn:hover {
-    background: var(--primary-dark);
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+.auth-btn i {
+    font-size: 2rem;
+}
+
+.auth-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+}
+
+.auth-greeting {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.auth-action {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    font-weight: 400;
 }
 
 /* ============================================
@@ -518,45 +572,62 @@ a {
 .hero-content {
     position: relative;
     z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 50px;
+    align-items: start;
 }
 
-.hero-text {
-    max-width: 900px;
-    margin: 0 auto;
-    text-align: center;
+.hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .hero-title {
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     font-weight: 700;
     margin-bottom: 20px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     animation: fadeInUp 0.8s ease;
+    text-align: left;
+    line-height: 1.2;
 }
 
 .hero-description {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     line-height: 1.8;
     margin-bottom: 15px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     animation: fadeInUp 1s ease;
+    text-align: left;
 }
 
 .hero-features {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-    margin: 40px 0;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
     animation: fadeInUp 1.2s ease;
 }
 
 .feature-card {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    padding: 25px 15px;
-    border-radius: 15px;
+    padding: 15px 10px;
+    border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
 }
 
 .feature-card:hover {
@@ -566,27 +637,64 @@ a {
 }
 
 .feature-card i {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+    font-size: 1.8rem;
     color: var(--accent-color);
 }
 
 .feature-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
+    font-size: 0.85rem;
+    margin: 0;
 }
 
 .feature-card p {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     opacity: 0.9;
+    margin: 0;
 }
 
 .hero-cta {
     display: flex;
     gap: 15px;
-    justify-content: center;
-    margin-top: 30px;
+    justify-content: flex-start;
+    margin-top: 25px;
     animation: fadeInUp 1.4s ease;
+}
+
+.hero-video {
+    position: relative;
+    animation: fadeInUp 1s ease;
+}
+
+.video-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-xl);
+    transition: var(--transition);
+}
+
+.video-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.video-wrapper iframe {
+    border-radius: 12px;
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 476px;
+}
+
+.video-wrapper video {
+    border-radius: 12px;
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 650px;
+    object-fit: cover;
 }
 
 @keyframes fadeInUp {
@@ -698,7 +806,7 @@ a {
 
 .categories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
 }
 
@@ -827,11 +935,23 @@ a {
     font-size: 5rem;
     color: var(--primary-color);
     transition: var(--transition);
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
 }
 
 .product-card:hover .product-image {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     color: var(--white);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1);
 }
 
 .product-info {
@@ -1007,6 +1127,14 @@ a {
     border-radius: 15px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+    height: 100%;
+}
+
+.location-map iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    display: block;
 }
 
 .location-info {
@@ -1346,6 +1474,368 @@ a {
 }
 
 /* ============================================
+   AUTH MODAL
+   ============================================ */
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-modal.active {
+    display: flex;
+}
+
+.auth-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.auth-modal-content {
+    position: relative;
+    background: var(--white);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.auth-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--light-bg);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.auth-modal-close:hover {
+    background: var(--danger);
+    color: var(--white);
+    transform: rotate(90deg);
+}
+
+.auth-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 20px;
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+}
+
+.auth-tab.active {
+    color: var(--primary-color);
+}
+
+.auth-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+}
+
+.auth-form-container {
+    display: none;
+    padding: 40px 30px;
+}
+
+.auth-form-container.active {
+    display: block;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header i {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.auth-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.auth-header p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.auth-form .form-group {
+    margin-bottom: 20px;
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.auth-form label i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+/* Input Error States */
+.auth-form input.input-error {
+    border-color: var(--danger);
+    background-color: #fff5f5;
+}
+
+.auth-form input.input-error:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-message i {
+    font-size: 0.9rem;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-bar {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.strength-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.password-strength.weak .strength-fill {
+    width: 33%;
+    background: var(--danger);
+}
+
+.password-strength.weak .strength-text {
+    color: var(--danger);
+}
+
+.password-strength.medium .strength-fill {
+    width: 66%;
+    background: var(--warning);
+}
+
+.password-strength.medium .strength-text {
+    color: var(--warning);
+}
+
+.password-strength.strong .strength-fill {
+    width: 100%;
+    background: var(--success);
+}
+
+.password-strength.strong .strength-text {
+    color: var(--success);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text-dark);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.forgot-password:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.auth-divider {
+    text-align: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+    z-index: 0;
+}
+
+.auth-divider span {
+    background: var(--white);
+    padding: 0 15px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+}
+
+.social-auth {
+    display: flex;
+    gap: 15px;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.facebook-btn:hover {
+    background: #1877f2;
+    color: var(--white);
+    border-color: #1877f2;
+}
+
+.google-btn:hover {
+    background: #ea4335;
+    color: var(--white);
+    border-color: #ea4335;
+}
+
+.auth-form .checkbox-label a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.auth-form .checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 @media (max-width: 1024px) {
@@ -1356,6 +1846,38 @@ a {
     
     .hero-title {
         font-size: 2.5rem;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .hero-left {
+        text-align: center;
+    }
+    
+    .hero-title,
+    .hero-description {
+        text-align: center;
+    }
+    
+    .hero-cta {
+        justify-content: center;
+    }
+    
+    .hero-right {
+        align-items: center;
+    }
+    
+    .video-wrapper {
+        max-width: 350px;
+    }
+    
+    .hero-features {
+        max-width: 100%;
+        width: 100%;
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -1442,15 +1964,33 @@ a {
     }
     
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .hero-description {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
     
     .hero-features {
+        gap: 10px;
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .feature-card {
+        padding: 12px 15px;
+    }
+    
+    .feature-card i {
+        font-size: 1.5rem;
+        min-width: 35px;
+    }
+    
+    .feature-card h3 {
+        font-size: 0.85rem;
+    }
+    
+    .feature-card p {
+        font-size: 0.75rem;
     }
     
     .hero-cta {
@@ -1462,7 +2002,7 @@ a {
     }
     
     .categories-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .products-grid {
