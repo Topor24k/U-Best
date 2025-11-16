@@ -2,80 +2,11 @@
 // SHOP & PRODUCT DATA
 // ============================================
 
-const products = [
-    {
-        id: 1,
-        name: "Belgian Double Waffle Maker",
-        category: "baking-machines",
-        price: 28500,
-        oldPrice: 32000,
-        image: "Photo/Belgian Waffle Maker.jpg",
-        description: "Professional double waffle maker with temperature control",
-        rating: 4.5,
-        badge: "sale",
-        featured: true
-    },
-    {
-        id: 2,
-        name: "3 in 1 Burger-Fryer-Steamer",
-        category: "baking-machines",
-        price: 32500,
-        oldPrice: null,
-        image: "Photo/3 in 1 Burger-Fryer-Steamer.jpg",
-        description: "Multi-functional equipment for burger, frying, and steaming",
-        rating: 5.0,
-        badge: "new",
-        featured: true
-    },
-    {
-        id: 3,
-        name: "Burger Griddle",
-        category: "baking-machines",
-        price: 45000,
-        oldPrice: 52000,
-        image: "Photo/Burger Griddle.jpg",
-        description: "Professional griddle for burgers and grilled sandwiches",
-        rating: 4.0,
-        badge: "hot",
-        featured: true
-    },
-    {
-        id: 4,
-        name: "2 x 16 Siomai Steamer",
-        category: "baking-machines",
-        price: 38000,
-        oldPrice: null,
-        image: "Photo/2 x 16 Siomai Steamer.jpg",
-        description: "Double-deck steamer with 16-basket capacity per deck",
-        rating: 4.6,
-        badge: "new",
-        featured: true
-    },
-    {
-        id: 5,
-        name: "3 x 16 Siomai Steamer",
-        category: "baking-machines",
-        price: 55000,
-        oldPrice: 62000,
-        image: "Photo/3 x 16 Siomai Steamer.jpg",
-        description: "Triple-deck steamer with 16-basket capacity per deck",
-        rating: 4.8,
-        badge: "sale",
-        featured: true
-    },
-    {
-        id: 6,
-        name: "Deep Fryer",
-        category: "baking-machines",
-        price: 25000,
-        oldPrice: null,
-        image: "Photo/Deep Fryer.jpg",
-        description: "Commercial deep fryer with temperature control",
-        rating: 4.3,
-        badge: null,
-        featured: false
-    }
-];
+// Use products from products-data.js or fallback
+const products = typeof allProducts !== 'undefined' ? allProducts : [];
+
+// Current active station
+let currentStation = 'all';
 
 // ============================================
 // CART MANAGEMENT
@@ -162,6 +93,11 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
     
     let filteredProducts = [...products];
     
+    // Filter by station
+    if (currentStation !== 'all') {
+        filteredProducts = filteredProducts.filter(p => p.station === currentStation || p.station === 'all');
+    }
+    
     // Filter by category
     if (filter !== 'all') {
         filteredProducts = filteredProducts.filter(p => p.category === filter);
@@ -188,7 +124,8 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
             break;
         case 'featured':
         default:
-            filteredProducts.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+            // Sort by rating for featured
+            filteredProducts.sort((a, b) => b.rating - a.rating);
             break;
     }
     
@@ -205,15 +142,15 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
     
     productsGrid.innerHTML = filteredProducts.map(product => `
         <div class="product-card" data-product-id="${product.id}">
-            ${product.badge ? `<div class="product-badge ${product.badge}">${product.badge}</div>` : ''}
-            <button class="btn-add-wishlist" onclick="addToWishlist(${product.id})">
-                <i class="far fa-heart"></i>
+            ${product.oldPrice ? `<div class="product-badge sale">SALE</div>` : ''}
+            <button class="btn-add-wishlist ${isInWishlist(product.id) ? 'active' : ''}" onclick="toggleWishlist(${product.id}, event)">
+                <i class="${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart"></i>
             </button>
-            <div class="product-image">
+            <div class="product-image" onclick="openProductQuickView(${product.id})">
                 <img src="${product.image}" alt="${product.name}">
             </div>
             <div class="product-info">
-                <h3>${product.name}</h3>
+                <h3 onclick="openProductQuickView(${product.id})" style="cursor: pointer;">${product.name}</h3>
                 <p class="product-description">${product.description}</p>
                 <div class="product-rating">
                     ${getStarRating(product.rating)}
@@ -330,6 +267,61 @@ function updateCartSummary() {
 
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
+function isInWishlist(productId) {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    return wishlist.some(item => item.id === productId);
+}
+
+function toggleWishlist(productId, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    if (isInWishlist(productId)) {
+        // Remove from wishlist
+        let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        const product = wishlist.find(item => item.id === productId);
+        wishlist = wishlist.filter(item => item.id !== productId);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        
+        if (product) {
+            showNotification(`${product.name} removed from wishlist`, 'info');
+        }
+    } else {
+        // Add to wishlist
+        addToWishlist(productId);
+    }
+    
+    // Re-render products to update heart icon
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    const searchInput = document.getElementById('productSearch');
+    
+    renderProducts(
+        categoryFilter ? categoryFilter.value : 'all',
+        sortFilter ? sortFilter.value : 'featured',
+        searchInput ? searchInput.value : ''
+    );
+    
+    // Update favorites panel if it exists
+    if (typeof updateFavoritesPanel === 'function') {
+        updateFavoritesPanel();
+    }
+    if (typeof updateFavoritesBadge === 'function') {
+        updateFavoritesBadge();
+    }
+    if (typeof loadWishlistSection === 'function') {
+        loadWishlistSection();
+    }
+    
+    // Update wishlist badge in sidebar
+    const wishlistBadge = document.querySelector('.nav-item[data-section="wishlist"] .nav-badge');
+    if (wishlistBadge) {
+        const updatedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        wishlistBadge.textContent = updatedWishlist.length;
+    }
+}
+
 function addToWishlist(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -343,7 +335,8 @@ function addToWishlist(productId) {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image
+        image: product.image,
+        description: product.description || 'Premium bakery equipment'
     });
     
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
@@ -491,5 +484,43 @@ document.addEventListener('DOMContentLoaded', () => {
         initShopFilters();
         initCategories();
         initCheckout();
+        initStationTabs();
     }, 100);
 });
+
+// Expose search function globally for header search
+window.handleSearch = function(searchTerm) {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortFilter = document.getElementById('sortFilter');
+    const category = categoryFilter ? categoryFilter.value : 'all';
+    const sort = sortFilter ? sortFilter.value : 'featured';
+    renderProducts(category, sort, searchTerm);
+};
+
+// Initialize station tabs
+function initStationTabs() {
+    const stationTabs = document.querySelectorAll('.station-tab');
+    
+    stationTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            stationTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Update current station
+            currentStation = tab.getAttribute('data-station');
+            
+            // Re-render products with current filters
+            const categoryFilter = document.getElementById('categoryFilter');
+            const sortFilter = document.getElementById('sortFilter');
+            const searchInput = document.getElementById('productSearch');
+            
+            const category = categoryFilter ? categoryFilter.value : 'all';
+            const sort = sortFilter ? sortFilter.value : 'featured';
+            const search = searchInput ? searchInput.value : '';
+            
+            renderProducts(category, sort, search);
+        });
+    });
+}

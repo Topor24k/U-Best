@@ -12,22 +12,40 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="products-data.js"></script>
+    <script src="orders-data.js"></script>
 </head>
 <body>
     <!-- Dashboard Header -->
     <header class="dashboard-header">
         <div class="header-container">
-            <div class="logo">
-                <a href="index.html">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
                     <i class="fas fa-bread-slice"></i>
                     <span>U-BEST</span>
-                </a>
+                </div>
+            </div>
+            
+            <div class="header-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search products..." id="headerSearch">
             </div>
             
             <div class="header-actions">
-                <button class="notification-btn">
+                <button class="header-icon-btn" id="headerFavoritesBtn">
+                    <i class="fas fa-heart"></i>
+                    <span class="icon-badge wishlist-badge">0</span>
+                </button>
+                <button class="header-icon-btn" id="headerCartBtn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="icon-badge cart-badge">0</span>
+                </button>
+                <button class="header-icon-btn" id="headerNotificationsBtn">
                     <i class="fas fa-bell"></i>
-                    <span class="notification-badge">3</span>
+                    <span class="icon-badge notification-badge">0</span>
                 </button>
                 <div class="user-menu">
                     <button class="user-menu-btn" id="userMenuBtn">
@@ -41,16 +59,6 @@
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="user-dropdown" id="userDropdown">
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-user"></i> My Profile
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-cog"></i> Settings
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-question-circle"></i> Help Center
-                        </a>
-                        <div class="dropdown-divider"></div>
                         <a href="index.html" class="dropdown-item" id="signOutLink">
                             <i class="fas fa-sign-out-alt"></i> Sign Out
                         </a>
@@ -60,11 +68,179 @@
         </div>
     </header>
 
+    <!-- Cart Slide-out Panel -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-panel-overlay" id="cartPanelOverlay"></div>
+        <div class="cart-panel-content">
+            <div class="cart-panel-header">
+                <h2><i class="fas fa-shopping-cart"></i> Your Cart</h2>
+                <button class="cart-close-btn" id="cartCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="cart-panel-body">
+                <!-- Your Balance Card -->
+                <div class="balance-card">
+                    <div class="balance-card-header">
+                        <span class="balance-label">Your Balance</span>
+                        <i class="fab fa-cc-visa balance-icon"></i>
+                    </div>
+                    <div class="balance-amount" id="cartBalanceAmount">₱50,000.00</div>
+                    <div class="balance-card-number">•••• •••• •••• 4532</div>
+                </div>
+
+                <!-- Current Address -->
+                <div class="cart-address-section">
+                    <div class="cart-section-header">
+                        <span><i class="fas fa-map-marker-alt"></i> Delivery Address</span>
+                        <button class="change-address-btn" id="changeAddressBtn">Change</button>
+                    </div>
+                    <div class="current-address" id="cartCurrentAddress">
+                        <p class="address-name">Home</p>
+                        <p class="address-details">123 Main Street, Barangay Sample, City, Province 1234</p>
+                    </div>
+                </div>
+
+                <!-- Cart Items -->
+                <div class="cart-items-section">
+                    <div class="cart-section-header">
+                        <span><i class="fas fa-list"></i> Order Items</span>
+                    </div>
+                    <div class="cart-items-list" id="cartItemsList">
+                        <!-- Cart items will be dynamically inserted here -->
+                        <div class="empty-cart-message" id="emptyCartMessage">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Your cart is empty</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="cartSubtotal">₱0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Fee</span>
+                        <span id="cartDeliveryFee">₱0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span id="cartTotal">₱0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-panel-footer">
+                <button class="checkout-btn" id="cartCheckoutBtn">
+                    <i class="fas fa-check-circle"></i>
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorites Slide-out Panel -->
+    <div class="cart-panel favorites-panel" id="favoritesPanel">
+        <div class="cart-panel-overlay favorites-panel-overlay" id="favoritesPanelOverlay"></div>
+        <div class="cart-panel-content">
+            <div class="cart-panel-header">
+                <h2><i class="fas fa-heart"></i> Your Favorites</h2>
+                <button class="cart-close-btn" id="closeFavoritesPanel">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="cart-panel-body">
+                <div class="favorites-items-section">
+                    <div class="cart-section-header">
+                        <span><i class="fas fa-star"></i> Saved Products</span>
+                    </div>
+                    <div class="favorites-items-list" id="favoritesItemsList">
+                        <!-- Favorites will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-panel-footer">
+                <button class="checkout-btn" onclick="document.querySelector('[data-section=wishlist]').click(); closeFavoritesPanel();">
+                    <i class="fas fa-list"></i>
+                    View All Favorites
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Slide-out Panel -->
+    <div class="cart-panel notifications-panel" id="notificationsPanel">
+        <div class="cart-panel-overlay notifications-panel-overlay" id="notificationsPanelOverlay"></div>
+        <div class="cart-panel-content">
+            <div class="cart-panel-header">
+                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                <button class="cart-close-btn" id="closeNotificationsPanel">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="cart-panel-body">
+                <div class="notifications-tabs">
+                    <button class="notification-tab active" data-tab="all">All</button>
+                    <button class="notification-tab" data-tab="orders">Orders</button>
+                    <button class="notification-tab" data-tab="messages">Messages</button>
+                </div>
+
+                <div class="notifications-list" id="notificationsList">
+                    <!-- Notifications will be loaded here -->
+                </div>
+            </div>
+
+            <div class="cart-panel-footer">
+                <button class="checkout-btn" onclick="markAllAsRead()">
+                    <i class="fas fa-check-double"></i>
+                    Mark All as Read
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Reply Modal -->
+    <div class="modal-overlay" id="messageReplyModal">
+        <div class="modal-container message-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-reply"></i> Reply to Message</h2>
+                <button class="modal-close" onclick="closeMessageReplyModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="message-thread" id="messageThread">
+                    <!-- Message thread will be shown here -->
+                </div>
+                <form id="replyMessageForm" onsubmit="sendReply(event)">
+                    <div class="form-group">
+                        <label for="replyMessageText">Your Reply</label>
+                        <textarea id="replyMessageText" class="form-control" rows="4" placeholder="Type your message..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-outline" onclick="closeMessageReplyModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Send Reply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="dashboard-container">
         <!-- Sidebar Navigation -->
-        <aside class="dashboard-sidebar">
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
             <nav class="sidebar-nav">
-                <a href="#shop" class="nav-item active" data-section="shop">
+                <a href="#overview" class="nav-item active" data-section="overview">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#shop" class="nav-item" data-section="shop">
                     <i class="fas fa-store"></i>
                     <span>Shop</span>
                 </a>
@@ -72,52 +248,185 @@
                     <i class="fas fa-th"></i>
                     <span>Categories</span>
                 </a>
-                <a href="#cart" class="nav-item" data-section="cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Cart</span>
-                    <span class="nav-badge cart-badge">0</span>
-                </a>
                 <a href="#orders" class="nav-item" data-section="orders">
                     <i class="fas fa-shopping-bag"></i>
                     <span>My Orders</span>
                     <span class="nav-badge">3</span>
                 </a>
-                <a href="#wishlist" class="nav-item" data-section="wishlist">
-                    <i class="fas fa-heart"></i>
-                    <span>Wishlist</span>
-                    <span class="nav-badge">5</span>
-                </a>
-                <div class="nav-divider"></div>
-                <a href="#overview" class="nav-item" data-section="overview">
-                    <i class="fas fa-th-large"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="#profile" class="nav-item" data-section="profile">
+                <a href="#profile" class="nav-item has-submenu" data-section="profile" id="profileToggle">
                     <i class="fas fa-user"></i>
                     <span>Profile</span>
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
                 </a>
-                <a href="#addresses" class="nav-item" data-section="addresses">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Addresses</span>
-                </a>
-                <a href="#payment" class="nav-item" data-section="payment">
-                    <i class="fas fa-credit-card"></i>
-                    <span>Payment Methods</span>
-                </a>
+                <div class="submenu" id="profileSubmenu">
+                    <a href="#addresses" class="nav-item submenu-item" data-section="addresses">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Addresses</span>
+                    </a>
+                    <a href="#payment" class="nav-item submenu-item" data-section="payment">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payment Methods</span>
+                    </a>
+                </div>
                 <a href="#support" class="nav-item" data-section="support">
                     <i class="fas fa-headset"></i>
-                    <span>Support Tickets</span>
+                    <span>Help Center</span>
                 </a>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="dashboard-main">
+            <!-- Overview Section -->
+            <section id="overview-section" class="content-section active">
+                <!-- Dynamic Hero Banner -->
+                <div class="dashboard-hero">
+                    <div class="hero-content">
+                        <h1 class="hero-title" id="heroTitle">U-BEST is the best choice for you!</h1>
+                        <p class="hero-subtitle" id="heroSubtitle">We provide high-quality and reliable bakery equipment</p>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="hero-btn primary" onclick="document.querySelector('[data-section=shop]').click()">
+                            <i class="fas fa-shopping-bag"></i>
+                            Shop Now
+                        </button>
+                        <button class="hero-btn secondary" onclick="document.querySelector('[data-section=categories]').click()">
+                            <i class="fas fa-th"></i>
+                            Browse Categories
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Welcome back! Here's what's happening with your account.</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #FF6B35, #E55A2B);">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Orders</h3>
+                            <p class="stat-number">24</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 12% from last month
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4ECDC4, #44B3AA);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Pending Orders</h3>
+                            <p class="stat-number">3</p>
+                            <span class="stat-change">
+                                <i class="fas fa-minus"></i> No change
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #FFE66D, #E5CC5D);">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Wishlist Items</h3>
+                            <p class="stat-number">5</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 2 new items
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4CAF50, #45A049);">
+                            <i class="fas fa-peso-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Spent</h3>
+                            <p class="stat-number">₱156,500</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i> 8% increase
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card recent-orders-card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-star"></i> Delivered Orders - Add Reviews</h2>
+                            <a href="#orders" class="view-all-link" onclick="document.querySelector('[data-section=orders]').click()">View All Orders</a>
+                        </div>
+                        <div class="orders-list" id="deliveredOrdersList">
+                            <!-- Delivered orders will be dynamically loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card quick-actions-card">
+                        <div class="card-header">
+                            <h2>Quick Actions</h2>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=shop]').click()">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Browse Products</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=orders]').click()">
+                                <i class="fas fa-box"></i>
+                                <span>Track Order</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=wishlist]').click()">
+                                <i class="fas fa-heart"></i>
+                                <span>View Wishlist</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=support]').click()">
+                                <i class="fas fa-headset"></i>
+                                <span>Get Support</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Featured Products Rotating Display -->
+                <div class="dashboard-card featured-products-card">
+                    <div class="card-header">
+                        <h2 id="featuredProductsTitle">
+                            <i class="fas fa-star"></i> New Arrivals
+                        </h2>
+                        <a href="#shop" onclick="document.querySelector('[data-section=shop]').click()" class="view-all-link">View All</a>
+                    </div>
+                    <div class="featured-products-grid" id="featuredProductsGrid">
+                        <!-- Products will be loaded here dynamically -->
+                    </div>
+                </div>
+            </section>
+
             <!-- Shop Section -->
             <section id="shop-section" class="content-section active">
                 <div class="section-header">
                     <h1>Browse Products</h1>
                     <p>Discover our premium bakery equipment and supplies</p>
+                </div>
+
+                <!-- Shop Station Tabs -->
+                <div class="shop-stations">
+                    <button class="station-tab active" data-station="all">
+                        <i class="fas fa-th"></i> All Products
+                    </button>
+                    <button class="station-tab" data-station="new-arrivals">
+                        <i class="fas fa-star"></i> New Arrivals
+                    </button>
+                    <button class="station-tab" data-station="best-deals">
+                        <i class="fas fa-fire"></i> Best Deals
+                    </button>
+                    <button class="station-tab" data-station="pautang-deals">
+                        <i class="fas fa-hand-holding-usd"></i> Pautang Deals
+                    </button>
                 </div>
 
                 <div class="shop-filters">
@@ -272,147 +581,6 @@
                 </div>
             </section>
 
-            <!-- Overview Section -->
-            <section id="overview-section" class="content-section">
-                <div class="section-header">
-                    <h1>Dashboard Overview</h1>
-                    <p>Welcome back! Here's what's happening with your account.</p>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #FF6B35, #E55A2B);">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Total Orders</h3>
-                            <p class="stat-number">24</p>
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> 12% from last month
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #4ECDC4, #44B3AA);">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Pending Orders</h3>
-                            <p class="stat-number">3</p>
-                            <span class="stat-change">
-                                <i class="fas fa-minus"></i> No change
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #FFE66D, #E5CC5D);">
-                            <i class="fas fa-heart"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Wishlist Items</h3>
-                            <p class="stat-number">5</p>
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> 2 new items
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #4CAF50, #45A049);">
-                            <i class="fas fa-peso-sign"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Total Spent</h3>
-                            <p class="stat-number">₱156,500</p>
-                            <span class="stat-change positive">
-                                <i class="fas fa-arrow-up"></i> 8% increase
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-grid">
-                    <div class="dashboard-card recent-orders-card">
-                        <div class="card-header">
-                            <h2>Recent Orders</h2>
-                            <a href="#orders" class="view-all-link">View All</a>
-                        </div>
-                        <div class="orders-list">
-                            <div class="order-item">
-                                <div class="order-icon">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="order-info">
-                                    <h4>Order #ORD-2025-001</h4>
-                                    <p>Belgian Double Waffle Maker</p>
-                                    <span class="order-date">November 10, 2025</span>
-                                </div>
-                                <div class="order-status">
-                                    <span class="status-badge status-shipping">Shipping</span>
-                                    <p class="order-price">₱28,500</p>
-                                </div>
-                            </div>
-
-                            <div class="order-item">
-                                <div class="order-icon">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="order-info">
-                                    <h4>Order #ORD-2025-002</h4>
-                                    <p>3 in 1 Burger-Fryer-Steamer</p>
-                                    <span class="order-date">November 8, 2025</span>
-                                </div>
-                                <div class="order-status">
-                                    <span class="status-badge status-delivered">Delivered</span>
-                                    <p class="order-price">₱32,500</p>
-                                </div>
-                            </div>
-
-                            <div class="order-item">
-                                <div class="order-icon">
-                                    <i class="fas fa-box"></i>
-                                </div>
-                                <div class="order-info">
-                                    <h4>Order #ORD-2025-003</h4>
-                                    <p>2 x 16 Siomai Steamer</p>
-                                    <span class="order-date">November 5, 2025</span>
-                                </div>
-                                <div class="order-status">
-                                    <span class="status-badge status-pending">Pending</span>
-                                    <p class="order-price">₱18,000</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h2>Quick Actions</h2>
-                        </div>
-                        <div class="quick-actions">
-                            <a href="#orders" class="action-btn">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span>New Order</span>
-                            </a>
-                            <a href="#support" class="action-btn">
-                                <i class="fas fa-headset"></i>
-                                <span>Get Support</span>
-                            </a>
-                            <a href="#addresses" class="action-btn">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Add Address</span>
-                            </a>
-                            <a href="#payment" class="action-btn">
-                                <i class="fas fa-credit-card"></i>
-                                <span>Add Payment</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Orders Section -->
             <section id="orders-section" class="content-section">
                 <div class="section-header">
@@ -420,106 +588,138 @@
                     <p>Track and manage all your orders</p>
                 </div>
 
-                <div class="filter-bar">
-                    <button class="filter-btn active" data-filter="all">All Orders</button>
-                    <button class="filter-btn" data-filter="pending">Pending</button>
-                    <button class="filter-btn" data-filter="processing">Processing</button>
-                    <button class="filter-btn" data-filter="shipping">Shipping</button>
-                    <button class="filter-btn" data-filter="delivered">Delivered</button>
-                    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+                <!-- Order Status Tabs (similar to shop stations) -->
+                <div class="shop-stations">
+                    <button class="station-tab active orders-filter-btn" data-filter="all">
+                        <i class="fas fa-list"></i> All Orders
+                    </button>
+                    <button class="station-tab orders-filter-btn" data-filter="pending">
+                        <i class="fas fa-clock"></i> Pending
+                    </button>
+                    <button class="station-tab orders-filter-btn" data-filter="processing">
+                        <i class="fas fa-cog"></i> Processing
+                    </button>
+                    <button class="station-tab orders-filter-btn" data-filter="shipping">
+                        <i class="fas fa-truck"></i> Shipping
+                    </button>
+                    <button class="station-tab orders-filter-btn" data-filter="delivered">
+                        <i class="fas fa-check-circle"></i> Delivered
+                    </button>
+                    <button class="station-tab orders-filter-btn" data-filter="cancelled">
+                        <i class="fas fa-times-circle"></i> Cancelled
+                    </button>
                 </div>
 
-                <div class="orders-grid">
-                    <div class="order-card">
-                        <div class="order-card-header">
-                            <div class="order-header-left">
-                                <h3>Order #ORD-2025-001</h3>
-                                <span class="order-date"><i class="fas fa-calendar"></i> November 10, 2025</span>
-                            </div>
-                            <span class="status-badge status-shipping">Shipping</span>
-                        </div>
-                        <div class="order-card-body">
-                            <div class="order-product">
-                                <img src="Photo/Belgian Double Waffle Maker.jpg" alt="Belgian Double Waffle Maker">
-                                <div class="product-details">
-                                    <h4>Belgian Double Waffle Maker</h4>
-                                    <p>Quantity: 1</p>
-                                    <p class="product-price">₱28,500</p>
-                                </div>
-                            </div>
-                            <div class="order-progress">
-                                <div class="progress-step completed">
-                                    <div class="step-icon"><i class="fas fa-check"></i></div>
-                                    <span>Order Placed</span>
-                                </div>
-                                <div class="progress-line completed"></div>
-                                <div class="progress-step completed">
-                                    <div class="step-icon"><i class="fas fa-check"></i></div>
-                                    <span>Processing</span>
-                                </div>
-                                <div class="progress-line active"></div>
-                                <div class="progress-step active">
-                                    <div class="step-icon"><i class="fas fa-truck"></i></div>
-                                    <span>Shipping</span>
-                                </div>
-                                <div class="progress-line"></div>
-                                <div class="progress-step">
-                                    <div class="step-icon"><i class="fas fa-box"></i></div>
-                                    <span>Delivered</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-card-footer">
-                            <div class="order-total">
-                                <span>Total Amount:</span>
-                                <strong>₱28,500</strong>
-                            </div>
-                            <div class="order-actions">
-                                <button class="btn-outline btn-sm">
-                                    <i class="fas fa-map-marker-alt"></i> Track Order
-                                </button>
-                                <button class="btn-primary btn-sm">
-                                    <i class="fas fa-eye"></i> View Details
-                                </button>
-                            </div>
-                        </div>
+                <!-- Orders Filters (similar to shop filters) -->
+                <div class="shop-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="orderSearch" placeholder="Search orders by ID or product...">
                     </div>
+                    <select id="orderDateFilter" class="filter-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                    </select>
+                    <select id="orderSortFilter" class="filter-select">
+                        <option value="date-new">Date: Newest First</option>
+                        <option value="date-old">Date: Oldest First</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="price-low">Price: Low to High</option>
+                    </select>
+                </div>
 
-                    <div class="order-card">
-                        <div class="order-card-header">
-                            <div class="order-header-left">
-                                <h3>Order #ORD-2025-002</h3>
-                                <span class="order-date"><i class="fas fa-calendar"></i> November 8, 2025</span>
-                            </div>
-                            <span class="status-badge status-delivered">Delivered</span>
-                        </div>
-                        <div class="order-card-body">
-                            <div class="order-product">
-                                <img src="Photo/3 in 1 Burger-Fryer-Steamer.jpg" alt="3 in 1 Burger-Fryer-Steamer">
-                                <div class="product-details">
-                                    <h4>3 in 1 Burger-Fryer-Steamer</h4>
-                                    <p>Quantity: 1</p>
-                                    <p class="product-price">₱32,500</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-card-footer">
-                            <div class="order-total">
-                                <span>Total Amount:</span>
-                                <strong>₱32,500</strong>
-                            </div>
-                            <div class="order-actions">
-                                <button class="btn-outline btn-sm">
-                                    <i class="fas fa-star"></i> Rate Product
-                                </button>
-                                <button class="btn-primary btn-sm">
-                                    <i class="fas fa-redo"></i> Buy Again
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Orders Grid (similar to products grid) -->
+                <div class="orders-container" id="ordersContainer">
+                    <!-- Orders will be dynamically rendered here -->
                 </div>
             </section>
+
+            <!-- Order Tracking Modal -->
+            <div class="modal-overlay" id="orderTrackingModal">
+                <div class="modal-container order-tracking-modal">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-route"></i> Order Tracking</h2>
+                        <button class="modal-close" onclick="closeOrderTrackingModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tracking-order-info" id="trackingOrderInfo">
+                            <!-- Order info will be populated here -->
+                        </div>
+                        <div class="tracking-timeline" id="trackingTimeline">
+                            <!-- Tracking timeline will be populated here -->
+                        </div>
+                        <div class="tracking-map-container" id="trackingMapContainer">
+                            <div class="map-placeholder">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <p>Live tracking map</p>
+                                <span class="tracking-location" id="trackingLocation"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details Modal -->
+            <div class="modal-overlay" id="orderDetailsModal">
+                <div class="modal-container order-details-modal">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-receipt"></i> Order Details</h2>
+                        <button class="modal-close" onclick="closeOrderDetailsModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="orderDetailsContent">
+                        <!-- Order details will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Modal -->
+            <div class="modal-overlay" id="reviewModal">
+                <div class="modal-container review-modal">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-star"></i> Write a Review</h2>
+                        <button class="modal-close" onclick="closeReviewModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="review-product-info" id="reviewProductInfo">
+                            <!-- Product info will be populated here -->
+                        </div>
+                        <form id="reviewForm" onsubmit="submitReview(event)">
+                            <div class="form-group">
+                                <label>Your Rating</label>
+                                <div class="star-rating" id="starRating">
+                                    <i class="far fa-star" data-rating="1"></i>
+                                    <i class="far fa-star" data-rating="2"></i>
+                                    <i class="far fa-star" data-rating="3"></i>
+                                    <i class="far fa-star" data-rating="4"></i>
+                                    <i class="far fa-star" data-rating="5"></i>
+                                </div>
+                                <input type="hidden" id="ratingValue" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewTitle">Review Title</label>
+                                <input type="text" id="reviewTitle" class="form-control" placeholder="Summarize your experience" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewText">Your Review</label>
+                                <textarea id="reviewText" class="form-control" rows="5" placeholder="Share your thoughts about this product..." required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-outline" onclick="closeReviewModal()">Cancel</button>
+                                <button type="submit" class="btn-primary">Submit Review</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
             <!-- Wishlist Section -->
             <section id="wishlist-section" class="content-section">
@@ -528,66 +728,8 @@
                     <p>Items you've saved for later</p>
                 </div>
 
-                <div class="wishlist-grid">
-                    <div class="wishlist-item">
-                        <button class="remove-wishlist"><i class="fas fa-times"></i></button>
-                        <div class="wishlist-image">
-                            <img src="Photo/Burger Griddle.jpg" alt="Burger Griddle">
-                        </div>
-                        <div class="wishlist-content">
-                            <h3>Burger Griddle</h3>
-                            <p>Professional griddle for burgers and grilled sandwiches</p>
-                            <div class="wishlist-price">
-                                <span class="price">₱22,000</span>
-                                <span class="availability in-stock">
-                                    <i class="fas fa-check-circle"></i> In Stock
-                                </span>
-                            </div>
-                            <button class="btn-primary btn-sm">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="wishlist-item">
-                        <button class="remove-wishlist"><i class="fas fa-times"></i></button>
-                        <div class="wishlist-image">
-                            <img src="Photo/2 x 16 Siomai Steamer.jpg" alt="2 x 16 Siomai Steamer">
-                        </div>
-                        <div class="wishlist-content">
-                            <h3>2 x 16 Siomai Steamer</h3>
-                            <p>Double-deck steamer with 16-basket capacity per deck</p>
-                            <div class="wishlist-price">
-                                <span class="price">₱18,000</span>
-                                <span class="availability in-stock">
-                                    <i class="fas fa-check-circle"></i> In Stock
-                                </span>
-                            </div>
-                            <button class="btn-primary btn-sm">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="wishlist-item">
-                        <button class="remove-wishlist"><i class="fas fa-times"></i></button>
-                        <div class="wishlist-image">
-                            <img src="Photo/Big Single Deep Fryer.jpg" alt="Big Single Deep Fryer">
-                        </div>
-                        <div class="wishlist-content">
-                            <h3>Big Single Deep Fryer</h3>
-                            <p>Large capacity deep fryer with temperature control</p>
-                            <div class="wishlist-price">
-                                <span class="price">₱15,500</span>
-                                <span class="availability low-stock">
-                                    <i class="fas fa-exclamation-triangle"></i> Low Stock
-                                </span>
-                            </div>
-                            <button class="btn-primary btn-sm">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
-                        </div>
-                    </div>
+                <div class="wishlist-grid" id="wishlistGrid">
+                    <!-- Wishlist items will be loaded dynamically -->
                 </div>
             </section>
 

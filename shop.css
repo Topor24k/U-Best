@@ -2,6 +2,47 @@
    SHOP STYLES
    ============================================ */
 
+/* Shop Station Tabs */
+.shop-stations {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0;
+    overflow-x: auto;
+}
+
+.station-tab {
+    background: transparent;
+    border: none;
+    padding: 15px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.station-tab:hover {
+    color: var(--primary-color);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+.station-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+.station-tab i {
+    font-size: 1.1rem;
+}
+
 /* Navigation Divider */
 .nav-divider {
     height: 1px;
@@ -236,6 +277,20 @@
 
 .btn-add-wishlist:hover i {
     color: white;
+}
+
+.btn-add-wishlist.active {
+    background: #FF6B35;
+    animation: heartBeat 0.3s ease;
+}
+
+.btn-add-wishlist.active i {
+    color: white;
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
 }
 
 /* Categories Grid */

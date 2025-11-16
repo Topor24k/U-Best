@@ -599,8 +599,32 @@ console.log('%cclearAllUsers() - Clear all accounts (use with caution)', 'color:
 // ============================================
 let cartCount = 0;
 
+// Check if user is logged in
+function isUserLoggedIn() {
+    return localStorage.getItem('currentUser') !== null;
+}
+
+// Prompt user to login
+function promptLogin(message = 'Please sign in to shop our products') {
+    showNotification(message, 'info');
+    setTimeout(() => {
+        if (authModal) {
+            authModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }, 500);
+}
+
 addToCartBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Check if user is logged in
+        if (!isUserLoggedIn()) {
+            promptLogin('Please sign in to add items to your cart');
+            return;
+        }
+        
         const productCard = this.closest('.product-card');
         const productName = productCard.querySelector('h3').textContent;
         
@@ -896,19 +920,8 @@ const heroCTAButtons = document.querySelectorAll('.hero-cta .btn');
 heroCTAButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
         if (btn.classList.contains('btn-primary')) {
-            // Shop Now button - scroll to products
-            e.preventDefault();
-            const productsSection = document.getElementById('new-arrivals');
-            if (productsSection) {
-                const headerOffset = 140;
-                const elementPosition = productsSection.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
+            // Shop Now button handled by the shopping action buttons section below
+            // This listener is removed to prevent duplicate handling
         } else if (btn.classList.contains('btn-secondary')) {
             // Contact Us button - scroll to contact
             e.preventDefault();
@@ -924,18 +937,6 @@ heroCTAButtons.forEach(btn => {
                 });
             }
         }
-    });
-});
-
-// ============================================
-// Category Links
-// ============================================
-const categoryLinks = document.querySelectorAll('.category-link');
-categoryLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const categoryName = link.closest('.category-card').querySelector('h3').textContent;
-        showNotification(`Browsing ${categoryName}. This is a demo - in a real application, this would show category products.`, 'info');
     });
 });
 
@@ -1111,6 +1112,11 @@ function updatePasswordStrength(password) {
 const cartBtn = document.querySelector('.cart-btn');
 if (cartBtn) {
     cartBtn.addEventListener('click', () => {
+        if (!isUserLoggedIn()) {
+            promptLogin('Please sign in to view your cart');
+            return;
+        }
+        
         if (cartCount === 0) {
             showNotification('Your cart is empty. Add some products!', 'info');
         } else {
@@ -1118,6 +1124,36 @@ if (cartBtn) {
         }
     });
 }
+
+// ============================================
+// Handle Shopping Action Buttons
+// ============================================
+
+// Shop Now button in hero section
+const shopNowBtn = document.querySelector('.hero-cta .btn-primary');
+if (shopNowBtn) {
+    shopNowBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!isUserLoggedIn()) {
+            promptLogin('Sign in to start shopping!');
+        } else {
+            window.location.href = 'dashboard.html';
+        }
+    });
+}
+
+// Browse Products links in categories
+const categoryLinks = document.querySelectorAll('.category-link');
+categoryLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!isUserLoggedIn()) {
+            promptLogin('Please sign in to browse our products');
+        } else {
+            window.location.href = 'dashboard.html#categories';
+        }
+    });
+});
 
 // ============================================
 // Prevent form resubmission on page refresh
