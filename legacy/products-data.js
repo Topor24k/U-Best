@@ -1,11 +1,12 @@
 // ============================================
-// COMPREHENSIVE PRODUCT DATA - 80 PRODUCTS
-// Distributed across 8 categories and 4 stations
+// PRODUCT DATA - NOW MANAGED IN DATABASE
+// This file is kept for backwards compatibility
+// All product data should be added via phpMyAdmin
 // ============================================
 
 const allProducts = [
-    // BAKING MACHINES & BAKERY EQUIPMENT - 20 products
-    { id: 1, name: "Belgian Double Waffle Maker", category: "baking-machines", price: 28500, oldPrice: 32000, image: "https://via.placeholder.com/300x300?text=Waffle+Maker", description: "Professional double waffle maker with temperature control", rating: 4.5, station: "all" },
+    // Products will be loaded from MySQL database via API
+    // To add products, use phpMyAdmin and insert into the 'products' table
     { id: 2, name: "Industrial Deck Oven", category: "baking-machines", price: 125000, oldPrice: null, image: "https://via.placeholder.com/300x300?text=Deck+Oven", description: "Commercial deck oven for bread and pastries", rating: 4.8, station: "new-arrivals" },
     { id: 3, name: "Planetary Mixer 20L", category: "baking-machines", price: 45000, oldPrice: 52000, image: "https://via.placeholder.com/300x300?text=Mixer+20L", description: "Heavy-duty planetary mixer for dough", rating: 4.6, station: "best-deals" },
     { id: 4, name: "Convection Oven", category: "baking-machines", price: 85000, oldPrice: null, image: "https://via.placeholder.com/300x300?text=Convection+Oven", description: "Electric convection oven with fan circulation", rating: 4.7, station: "pautang-deals" },

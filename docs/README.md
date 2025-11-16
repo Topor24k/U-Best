@@ -1,24 +1,40 @@
 # U-BEST - Ulas Bakery Equipment And Supplies
 
 ## 🏪 About
-Professional e-commerce website for Ulas Bakery Equipment And Supplies with complete authentication and shopping system. **All shopping features are available only to logged-in users** - the main page serves as a business preview/landing page.
+Professional e-commerce website for Ulas Bakery Equipment And Supplies with complete authentication, shopping system, and admin dashboard. **All shopping features are available only to logged-in users** - the main page serves as a business preview/landing page.
 
 ## 📂 Project Structure
 ```
 Ulas Bakery Equipment And Supplies/
 ├── index.html          # Landing/Preview page (public)
-├── dashboard.html      # Shopping portal (authenticated users only)
+├── dashboard.html      # Shopping portal (authenticated users)
+├── admin.html          # Admin dashboard (administrators only)
 ├── styles.css          # Main website styles
 ├── dashboard.css       # Dashboard layout styles
+├── admin.css           # Admin dashboard styles
 ├── shop.css            # Shop/products/cart styles
 ├── script.js           # Main website & authentication
 ├── dashboard.js        # Dashboard navigation & features
+├── admin.js            # Admin panel functionality
 ├── shop.js             # Products, cart, checkout logic
+├── products-data.js    # Product database
+├── orders-data.js      # Orders database
 ├── Photo/              # Product images
 ├── Video/              # Hero video (U-Best.mp4)
 ├── README.md           # This file
 └── STRUCTURE.md        # Detailed architecture guide
 ```
+
+## 🔐 Login Credentials
+
+### Admin Access
+- **Email**: `admin@ubest.com`
+- **Password**: `admin123`
+- **Redirects to**: `admin.html` (Admin Dashboard)
+
+### Customer Access
+- Create a new account via Sign Up
+- **Redirects to**: `dashboard.html` (Shopping Portal)
 
 ## ✨ Features
 
@@ -73,9 +89,79 @@ After signing in, users get access to the complete e-commerce platform:
 - **Payment Methods** - Manage payment cards and GCash
 - **Support Tickets** - Customer support system
 
+### Admin Dashboard (admin.html) - Administrators Only
+After logging in with admin credentials, administrators get access to:
+
+#### 📊 Dashboard Features
+- **Overview Statistics**
+  - Total Revenue
+  - Total Orders
+  - Total Customers
+  - Pending Orders count
+  - Recent orders list
+  - Low stock alerts
+
+#### 🛠️ Management Tools
+- **Orders Management**
+  - View all customer orders
+  - Filter by status (Pending, Processing, Shipping, Delivered, Cancelled)
+  - Search orders by ID or customer
+  - Update order status
+  - View order details
+  
+- **Products Management**
+  - View all products in grid
+  - Add new products
+  - Edit product details (name, price, description, category)
+  - Delete products
+  - Search and filter products
+  
+- **Customers Management**
+  - View all registered customers
+  - Customer details (email, phone, join date)
+  - View customer order history
+  - Track customer spending
+  
+- **Inventory Management**
+  - Track stock levels
+  - Update stock quantities
+  - Stock status indicators
+  - Low stock alerts
+  
+- **Reviews Management**
+  - View all product reviews
+  - Monitor customer ratings
+  - Approve/Delete reviews
+  
+- **Support Tickets**
+  - View customer support requests
+  - Reply to tickets
+  - Mark as resolved
+  - Filter by status
+  
+- **Analytics & Reports**
+  - Sales trend charts
+  - Top products analysis
+  - Customer growth metrics
+  
+- **Settings**
+  - Store information
+  - Admin password change
+  - System configuration
+
 ## 🚀 How to Use
 
-### First Time User
+### Admin Login
+1. Open `index.html` in a web browser
+2. Click the **"Sign In"** button
+3. Enter admin credentials:
+   - **Email**: `admin@ubest.com`
+   - **Password**: `admin123`
+4. Click **"Sign In"**
+5. You'll be redirected to `admin.html` (Admin Dashboard)
+6. Manage orders, products, customers, and more!
+
+### First Time User (Customer)
 1. Open `index.html` in a web browser
 2. Browse the landing page to learn about U-BEST
 3. Click the **"Sign In"** button in the header

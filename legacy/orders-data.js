@@ -1,56 +1,12 @@
-// Sample Orders Data
+// ============================================
+// ORDERS DATA - NOW MANAGED IN DATABASE
+// This file is kept for backwards compatibility
+// All order data should be managed via the system
+// ============================================
+
 const ordersData = [
-    {
-        id: 'ORD-2025-001',
-        date: 'November 14, 2025',
-        status: 'shipping',
-        items: [
-            {
-                name: 'Belgian Double Waffle Maker',
-                image: 'Photo/Belgian Double Waffle Maker.jpg',
-                quantity: 1,
-                price: 28500
-            },
-            {
-                name: 'Commercial Toaster',
-                image: 'https://via.placeholder.com/80x80',
-                quantity: 2,
-                price: 15000
-            }
-        ],
-        subtotal: 58500,
-        delivery: 500,
-        total: 59000,
-        deliveryAddress: {
-            name: 'Kayeen Campana',
-            street: '123 Bakery Street, Brgy. San Jose',
-            city: 'Manila, Metro Manila 1000',
-            phone: '+63 912 345 6789'
-        },
-        tracking: {
-            orderPlaced: {
-                completed: true,
-                date: 'Nov 14, 2025 - 10:30 AM',
-                location: 'U-BEST Main Warehouse, Quezon City'
-            },
-            processing: {
-                completed: true,
-                date: 'Nov 14, 2025 - 2:45 PM',
-                location: 'Processing Center - Quality Check Passed'
-            },
-            shipping: {
-                completed: false,
-                active: true,
-                date: 'Nov 15, 2025 - 8:00 AM',
-                location: 'In Transit - Currently at Manila Distribution Hub'
-            },
-            delivered: {
-                completed: false,
-                date: null,
-                location: 'Delivery scheduled for Nov 16, 2025'
-            }
-        }
-    },
+    // Orders will be loaded from MySQL database via API
+    // Orders are created when customers checkout
     {
         id: 'ORD-2025-002',
         date: 'November 12, 2025',

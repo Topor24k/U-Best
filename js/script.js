@@ -315,6 +315,26 @@ if (signinForm) {
         
         // Simulate API delay
         setTimeout(() => {
+            // Check for admin login
+            if (email.toLowerCase() === 'admin@ubest.com' && password === 'admin123') {
+                // Admin login
+                const adminUser = {
+                    name: 'Admin',
+                    email: 'admin@ubest.com',
+                    phone: '+63 123 456 7890',
+                    role: 'admin',
+                    createdAt: new Date().toISOString()
+                };
+                
+                localStorage.setItem('currentUser', JSON.stringify(adminUser));
+                showNotification('Welcome Admin! Redirecting to admin panel...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1000);
+                return;
+            }
+            
             const users = getAllUsers();
             const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
             
@@ -340,6 +360,7 @@ if (signinForm) {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                role: 'customer',
                 createdAt: user.createdAt
             };
             
