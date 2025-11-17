@@ -1033,8 +1033,45 @@
         </main>
     </div>
 
+    <!-- Customer Reviews Modal -->
+    <div id="reviewsModal" class="reviews-modal">
+        <div class="reviews-modal-content">
+            <div class="reviews-modal-header">
+                <h2><i class="fas fa-star"></i> Customer Reviews</h2>
+                <button class="reviews-modal-close" id="closeReviewsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="reviews-modal-body">
+                <!-- Product Summary -->
+                <div class="modal-product-summary">
+                    <div class="modal-product-image">
+                        <img id="modalProductImage" src="" alt="">
+                    </div>
+                    <div class="modal-product-details">
+                        <h3 id="modalProductName">Product Name</h3>
+                        <p id="modalProductDesc">Product description</p>
+                        <div class="modal-rating-summary">
+                            <span class="stars" id="modalRatingStars"></span>
+                            <span class="rating-text" id="modalRatingValue">0.0</span>
+                            <span class="review-count" id="modalReviewCount">(0 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reviews List -->
+                <div class="reviews-list" id="reviewsList">
+                    <!-- Reviews will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Data Manager (must load first) -->
     <script src="legacy/data-manager.js"></script>
+    
+    <!-- Products Data -->
+    <script src="js/products-data.js"></script>
     
     <!-- Main Scripts -->
     <script src="js/dashboard.js"></script>

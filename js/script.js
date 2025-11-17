@@ -1182,3 +1182,173 @@ categoryLinks.forEach(link => {
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
+
+// ============================================
+// DYNAMIC NEW ARRIVALS SECTION
+// ============================================
+
+// Function to get star rating HTML
+function getStarRating(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    let stars = '';
+    
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star"></i>';
+    }
+    
+    if (hasHalfStar) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+    }
+    
+    const emptyStars = 5 - Math.ceil(rating);
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
+    }
+    
+    return stars;
+}
+
+// Function to render products
+function renderNewArrivals() {
+    const newArrivalsGrid = document.getElementById('newArrivalsGrid');
+    if (!newArrivalsGrid) return;
+    
+    // Check if products data is loaded
+    if (typeof allProducts === 'undefined' || !allProducts || allProducts.length === 0) {
+        console.warn('Products data not loaded yet');
+        return;
+    }
+    
+    // Filter products with 'new' badge or from new-arrivals station
+    const newArrivalsProducts = allProducts.filter(p => 
+        p.badge === 'new' || p.station === 'new-arrivals'
+    );
+    
+    if (newArrivalsProducts.length === 0) {
+        newArrivalsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">No new arrivals at the moment.</p>';
+        return;
+    }
+    
+    // Shuffle array to get random products
+    const shuffled = [...newArrivalsProducts].sort(() => Math.random() - 0.5);
+    
+    // Take first 4 products
+    const productsToShow = shuffled.slice(0, 4);
+    
+    // Render products
+    newArrivalsGrid.innerHTML = productsToShow.map(product => {
+        // Determine badge
+        let badgeHTML = '';
+        if (product.badge === 'new') {
+            badgeHTML = '<div class="product-badge new">NEW</div>';
+        } else if (product.badge === 'hot') {
+            badgeHTML = '<div class="product-badge hot">HOT</div>';
+        } else if (product.badge === 'sale') {
+            badgeHTML = '<div class="product-badge sale">SALE</div>';
+        }
+        
+        return `
+            <div class="product-card">
+                ${badgeHTML}
+                <div class="product-image">
+                    <img src="${product.image}" alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-rating">
+                        ${getStarRating(product.rating)}
+                        <span>(${product.rating})</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">₱${product.price.toLocaleString()}</span>
+                        ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice.toLocaleString()}</span>` : ''}
+                    </div>
+                    <button class="btn-add-cart">Add to Cart</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Re-attach event listeners to new buttons
+    const newAddToCartBtns = newArrivalsGrid.querySelectorAll('.btn-add-cart');
+    newAddToCartBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Check if user is logged in
+            if (!isUserLoggedIn()) {
+                promptLogin('Please sign in to add items to your cart');
+                return;
+            }
+            
+            const productCard = this.closest('.product-card');
+            const productName = productCard.querySelector('h3').textContent;
+            
+            cartCount++;
+            updateCartCount();
+            
+            // Button animation
+            this.innerHTML = '<i class="fas fa-check"></i> Added!';
+            this.style.background = 'var(--success)';
+            
+            setTimeout(() => {
+                this.innerHTML = 'Add to Cart';
+                this.style.background = '';
+            }, 2000);
+            
+            showNotification(`${productName} added to cart!`, 'success');
+        });
+    });
+    
+    // Apply fade-in animation to product cards
+    const productCards = newArrivalsGrid.querySelectorAll('.product-card');
+    productCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100);
+    });
+}
+
+// Rotate new arrivals every 8 seconds
+let rotationInterval;
+
+function startNewArrivalsRotation() {
+    // Initial render
+    renderNewArrivals();
+    
+    // Set up rotation interval (8 seconds)
+    rotationInterval = setInterval(() => {
+        renderNewArrivals();
+    }, 8000);
+}
+
+function stopNewArrivalsRotation() {
+    if (rotationInterval) {
+        clearInterval(rotationInterval);
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a bit for products data to load
+    setTimeout(() => {
+        if (typeof allProducts !== 'undefined' && allProducts.length > 0) {
+            startNewArrivalsRotation();
+            console.log('✅ New Arrivals section initialized with', allProducts.filter(p => p.badge === 'new' || p.station === 'new-arrivals').length, 'products');
+        } else {
+            console.warn('⚠️ Products data not available for New Arrivals section');
+        }
+    }, 100);
+});
+
+// Stop rotation when user leaves the page
+window.addEventListener('beforeunload', () => {
+    stopNewArrivalsRotation();
+});

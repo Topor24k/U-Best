@@ -140,32 +140,61 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
         return;
     }
     
-    productsGrid.innerHTML = filteredProducts.map(product => `
-        <div class="product-card" data-product-id="${product.id}">
-            ${product.oldPrice ? `<div class="product-badge sale">SALE</div>` : ''}
-            <button class="btn-add-wishlist ${isInWishlist(product.id) ? 'active' : ''}" onclick="toggleWishlist(${product.id}, event)">
-                <i class="${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart"></i>
-            </button>
-            <div class="product-image" onclick="openProductQuickView(${product.id})">
-                <img src="${product.image}" alt="${product.name}">
-            </div>
-            <div class="product-info">
-                <h3 onclick="openProductQuickView(${product.id})" style="cursor: pointer;">${product.name}</h3>
-                <p class="product-description">${product.description}</p>
-                <div class="product-rating">
-                    ${getStarRating(product.rating)}
-                    <span>(${product.rating})</span>
-                </div>
-                <div class="product-price">
-                    <span class="price">₱${product.price.toLocaleString()}</span>
-                    ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice.toLocaleString()}</span>` : ''}
-                </div>
-                <button class="btn-add-cart" onclick="addToCart(${product.id})">
-                    <i class="fas fa-shopping-cart"></i> Add to Cart
+    productsGrid.innerHTML = filteredProducts.map(product => {
+        // Determine badge type
+        let badgeHTML = '';
+        if (product.badge === 'new') {
+            badgeHTML = '<div class="product-badge new">NEW</div>';
+        } else if (product.badge === 'hot') {
+            badgeHTML = '<div class="product-badge hot">HOT</div>';
+        } else if (product.badge === 'sale') {
+            badgeHTML = '<div class="product-badge sale">SALE</div>';
+        }
+        
+        // Stock status
+        const stockClass = product.stock === 0 ? 'out' : (product.stock <= 5 ? 'low' : '');
+        const stockText = product.stock === 0 ? 'Out of Stock' : product.stock;
+        
+        // Availability badge
+        const availabilityHTML = product.available 
+            ? '<div class="product-availability in-stock"><i class="fas fa-check-circle"></i> Available</div>'
+            : '<div class="product-availability out-of-stock"><i class="fas fa-times-circle"></i> Not Available</div>';
+        
+        return `
+            <div class="product-card" data-product-id="${product.id}">
+                ${badgeHTML}
+                <button class="btn-add-wishlist ${isInWishlist(product.id) ? 'active' : ''}" onclick="toggleWishlist(${product.id}, event)">
+                    <i class="${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart"></i>
                 </button>
+                <div class="product-image">
+                    <img src="${product.image}" alt="${product.name}">
+                    ${availabilityHTML}
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-rating" onclick="openReviewsModal(${product.id})" style="cursor: pointer;" title="Click to see all reviews">
+                        ${getStarRating(product.rating)}
+                        <span>(${product.rating})</span>
+                    </div>
+                    <div class="product-stock">
+                        <span class="stock-label">Stock:</span>
+                        <span class="stock-value ${stockClass}">${stockText}</span>
+                    </div>
+                    <div class="product-price">
+                        <span class="price">₱${product.price.toLocaleString()}</span>
+                        ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice.toLocaleString()}</span>` : ''}
+                    </div>
+                    <button class="btn-add-cart" onclick="addToCart(${product.id})" ${!product.available || product.stock === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-shopping-cart"></i> ${product.available && product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                    </button>
+                    <button class="btn-view-reviews" onclick="openReviewsModal(${product.id})">
+                        <i class="fas fa-comments"></i> View ${product.reviews ? product.reviews.length : 0} Reviews
+                    </button>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function getStarRating(rating) {
@@ -485,8 +514,136 @@ document.addEventListener('DOMContentLoaded', () => {
         initCategories();
         initCheckout();
         initStationTabs();
+        initReviewsModal();
     }, 100);
 });
+
+// ============================================
+// CUSTOMER REVIEWS MODAL
+// ============================================
+
+function openReviewsModal(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    const modal = document.getElementById('reviewsModal');
+    if (!modal) return;
+    
+    // Populate product summary
+    document.getElementById('modalProductName').textContent = product.name;
+    document.getElementById('modalProductDesc').textContent = product.description;
+    document.getElementById('modalProductImage').src = product.image;
+    document.getElementById('modalProductImage').alt = product.name;
+    
+    // Calculate average rating
+    const avgRating = product.rating;
+    const reviewCount = product.reviews ? product.reviews.length : 0;
+    
+    document.getElementById('modalRatingStars').innerHTML = getStarRating(avgRating);
+    document.getElementById('modalRatingValue').textContent = avgRating.toFixed(1);
+    document.getElementById('modalReviewCount').textContent = `(${reviewCount} ${reviewCount === 1 ? 'review' : 'reviews'})`;
+    
+    // Populate reviews list
+    const reviewsList = document.getElementById('reviewsList');
+    
+    if (!product.reviews || product.reviews.length === 0) {
+        reviewsList.innerHTML = `
+            <div class="no-reviews">
+                <i class="fas fa-comment-slash"></i>
+                <h3>No Reviews Yet</h3>
+                <p>Be the first to review this product!</p>
+            </div>
+        `;
+    } else {
+        reviewsList.innerHTML = product.reviews.map(review => `
+            <div class="review-item">
+                <div class="review-item-header">
+                    <div class="review-user-info">
+                        <div class="review-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="review-user-details">
+                            <h4>
+                                ${review.user}
+                                ${review.verified ? '<span class="verified-badge"><i class="fas fa-check-circle"></i> Verified</span>' : ''}
+                            </h4>
+                            <p class="review-user-location">
+                                <i class="fas fa-map-marker-alt"></i> ${review.location}
+                            </p>
+                        </div>
+                    </div>
+                    <span class="review-date">${formatReviewDate(review.date)}</span>
+                </div>
+                <div class="review-rating">
+                    ${getStarRating(review.rating)}
+                </div>
+                <p class="review-comment">${review.comment}</p>
+            </div>
+        `).join('');
+    }
+    
+    // Show modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeReviewsModal() {
+    const modal = document.getElementById('reviewsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function formatReviewDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+        return 'Today';
+    } else if (diffDays === 1) {
+        return 'Yesterday';
+    } else if (diffDays < 7) {
+        return `${diffDays} days ago`;
+    } else if (diffDays < 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+    } else {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
+}
+
+function initReviewsModal() {
+    const modal = document.getElementById('reviewsModal');
+    if (!modal) return;
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeReviewsModal();
+        }
+    });
+    
+    // Close modal with close button
+    const closeBtn = document.getElementById('closeReviewsModal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeReviewsModal);
+    }
+    
+    // Close modal with ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeReviewsModal();
+        }
+    });
+}
+
+// Make functions globally accessible
+window.openReviewsModal = openReviewsModal;
+window.closeReviewsModal = closeReviewsModal;
 
 // Expose search function globally for header search
 window.handleSearch = function(searchTerm) {
