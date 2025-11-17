@@ -157,6 +157,30 @@
                 <div class="favorites-items-section">
                     <div class="cart-section-header">
                         <span><i class="fas fa-star"></i> Saved Products</span>
+                        <div class="favorites-filter-dropdown">
+                            <button class="favorites-filter-btn" id="favoritesFilterBtn">
+                                <i class="fas fa-bars"></i>
+                                <span id="currentFilterText">All</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="favorites-filter-menu" id="favoritesFilterMenu">
+                                <button class="filter-option active" data-category="all">
+                                    <i class="fas fa-th"></i> All
+                                </button>
+                                <button class="filter-option" data-category="new">
+                                    <i class="fas fa-star"></i> New Arrivals
+                                </button>
+                                <button class="filter-option" data-category="sale">
+                                    <i class="fas fa-fire"></i> Best Deals
+                                </button>
+                                <button class="filter-option" data-category="hot">
+                                    <i class="fas fa-trophy"></i> Popular
+                                </button>
+                                <button class="filter-option" data-category="bundle">
+                                    <i class="fas fa-hand-holding-usd"></i> Pautang Deals
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="favorites-items-list" id="favoritesItemsList">
                         <!-- Favorites will be loaded here -->
@@ -251,7 +275,6 @@
                 <a href="#orders" class="nav-item" data-section="orders">
                     <i class="fas fa-shopping-bag"></i>
                     <span>My Orders</span>
-                    <span class="nav-badge">3</span>
                 </a>
                 <a href="#profile" class="nav-item has-submenu" data-section="profile" id="profileToggle">
                     <i class="fas fa-user"></i>
@@ -407,7 +430,7 @@
             </section>
 
             <!-- Shop Section -->
-            <section id="shop-section" class="content-section active">
+            <section id="shop-section" class="content-section">
                 <div class="section-header">
                     <h1>Browse Products</h1>
                     <p>Discover our premium bakery equipment and supplies</p>
@@ -446,8 +469,6 @@
                         <option value="trays-storage">Baking Trays & Storage</option>
                         <option value="utensils">Utensils & Accessories</option>
                         <option value="ingredients">Ingredients & Raw Materials</option>
-                        <option value="cleaning">Cleaning & Maintenance Tools</option>
-                        <option value="bundles">Bundle Packages</option>
                         <option value="cleaning">Cleaning & Maintenance Tools</option>
                     </select>
                     <select id="sortFilter" class="filter-select">
@@ -665,6 +686,9 @@
                                 <span class="tracking-location" id="trackingLocation"></span>
                             </div>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- Action buttons will be populated here by JavaScript -->
                     </div>
                 </div>
             </div>
@@ -1036,6 +1060,56 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Checkout Confirmation Modal -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="modal-container checkout-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-shopping-cart"></i> Confirm Checkout</h2>
+                <button class="modal-close" onclick="closeCheckoutModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="checkout-summary" id="checkoutSummary">
+                    <!-- Order summary will be populated here -->
+                </div>
+                
+                <div class="payment-method-section">
+                    <h3><i class="fas fa-credit-card"></i> Select Payment Method</h3>
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="balance" checked>
+                            <div class="payment-option-content">
+                                <i class="fas fa-wallet"></i>
+                                <div>
+                                    <strong>Account Balance</strong>
+                                    <p id="availableBalance">₱50,000.00</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="paymentMethod" value="cod">
+                            <div class="payment-option-content">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div>
+                                    <strong>Cash on Delivery</strong>
+                                    <p>Pay when you receive</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeCheckoutModal()">Cancel</button>
+                    <button type="button" class="btn-primary" onclick="confirmCheckout()">
+                        <i class="fas fa-check-circle"></i> Place Order
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Customer Reviews Modal -->

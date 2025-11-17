@@ -166,6 +166,10 @@ function initNavigation() {
                 // Load section-specific content
                 if (sectionId === 'wishlist') {
                     loadWishlistSection();
+                } else if (sectionId === 'orders') {
+                    renderOrders();
+                } else if (sectionId === 'categories') {
+                    updateCategoryCounts();
                 }
             }
         });
@@ -541,8 +545,11 @@ function renderOrders() {
     const ordersContainer = document.getElementById('ordersContainer');
     if (!ordersContainer) return;
     
-    // Check if ordersData exists
-    if (typeof ordersData === 'undefined' || !ordersData.length) {
+    // Load orders from localStorage
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    
+    // Check if orders exist
+    if (!orders || orders.length === 0) {
         ordersContainer.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
                 <i class="fas fa-inbox" style="font-size: 4rem; color: var(--text-light); margin-bottom: 20px;"></i>
@@ -555,8 +562,8 @@ function renderOrders() {
     
     // Filter orders by status
     let filteredOrders = currentOrderFilter === 'all' 
-        ? [...ordersData]
-        : ordersData.filter(order => order.status === currentOrderFilter);
+        ? [...orders]
+        : orders.filter(order => order.status === currentOrderFilter);
     
     // Filter by search term
     if (currentOrderSearch) {
@@ -601,24 +608,20 @@ function renderOrders() {
         const displayItems = order.items.slice(0, 2);
         const moreItems = order.items.length - 2;
         
-        // Calculate progress percentage
-        let progressPercent = 0;
-        let progressText = '';
+        // Define status messages based on current order status
+        let statusMessage = '';
         if (order.status === 'pending') {
-            progressPercent = 25;
-            progressText = 'Order Placed';
+            statusMessage = 'Waiting for the order to be accepted.';
         } else if (order.status === 'processing') {
-            progressPercent = 50;
-            progressText = 'Processing';
-        } else if (order.status === 'shipping') {
-            progressPercent = 75;
-            progressText = 'Out for Delivery';
+            statusMessage = 'Your product is now being processed.';
+        } else if (order.status === 'preparing') {
+            statusMessage = 'Preparing your order for shipment.';
+        } else if (order.status === 'shipped') {
+            statusMessage = 'Package picked up. Please wait for delivery.';
         } else if (order.status === 'delivered') {
-            progressPercent = 100;
-            progressText = 'Delivered';
+            statusMessage = 'Package has been delivered.';
         } else if (order.status === 'cancelled') {
-            progressPercent = 0;
-            progressText = 'Cancelled';
+            statusMessage = 'Order has been cancelled.';
         }
         
         return `
@@ -630,6 +633,11 @@ function renderOrders() {
                     </div>
                     <span class="status-badge ${statusClass}">${statusText}</span>
                 </div>
+                ${order.status !== 'cancelled' ? `
+                    <div class="order-status-message">
+                        <i class="fas fa-info-circle"></i> ${statusMessage}
+                    </div>
+                ` : ''}
                 <div class="order-card-body">
                     <div class="order-products-list">
                         ${displayItems.map(item => `
@@ -650,22 +658,27 @@ function renderOrders() {
                     </div>
                     ${order.status !== 'cancelled' ? `
                         <div class="order-progress-tracker">
-                            <div class="progress-step ${order.status === 'processing' || order.status === 'shipping' || order.status === 'delivered' ? 'completed' : ''} ${order.status === 'pending' ? 'active' : ''}">
+                            <div class="progress-step ${order.status === 'pending' ? 'active' : ''} ${order.status !== 'pending' ? 'completed' : ''}">
                                 <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
                                 <span class="step-label">Pending</span>
                             </div>
-                            <div class="progress-line ${order.status === 'processing' || order.status === 'shipping' || order.status === 'delivered' ? 'completed' : ''}"></div>
-                            <div class="progress-step ${order.status === 'processing' || order.status === 'shipping' || order.status === 'delivered' ? 'completed' : ''}">
+                            <div class="progress-line ${order.status !== 'pending' ? 'completed' : ''}"></div>
+                            <div class="progress-step ${order.status === 'processing' ? 'active' : ''} ${order.status === 'preparing' || order.status === 'shipped' || order.status === 'delivered' ? 'completed' : ''}">
                                 <div class="step-icon"><i class="fas fa-cog"></i></div>
                                 <span class="step-label">Processing</span>
                             </div>
-                            <div class="progress-line ${order.status === 'shipping' || order.status === 'delivered' ? 'completed' : ''}"></div>
-                            <div class="progress-step ${order.status === 'shipping' || order.status === 'delivered' ? 'completed' : ''} ${order.status === 'processing' ? 'active' : ''}">
+                            <div class="progress-line ${order.status === 'preparing' || order.status === 'shipped' || order.status === 'delivered' ? 'completed' : ''}"></div>
+                            <div class="progress-step ${order.status === 'preparing' ? 'active' : ''} ${order.status === 'shipped' || order.status === 'delivered' ? 'completed' : ''}">
+                                <div class="step-icon"><i class="fas fa-box"></i></div>
+                                <span class="step-label">Preparing</span>
+                            </div>
+                            <div class="progress-line ${order.status === 'shipped' || order.status === 'delivered' ? 'completed' : ''}"></div>
+                            <div class="progress-step ${order.status === 'shipped' ? 'active' : ''} ${order.status === 'delivered' ? 'completed' : ''}">
                                 <div class="step-icon"><i class="fas fa-truck"></i></div>
                                 <span class="step-label">Shipping</span>
                             </div>
                             <div class="progress-line ${order.status === 'delivered' ? 'completed' : ''}"></div>
-                            <div class="progress-step ${order.status === 'delivered' ? 'completed' : ''} ${order.status === 'shipping' ? 'active' : ''}">
+                            <div class="progress-step ${order.status === 'delivered' ? 'completed' : ''}">
                                 <div class="step-icon"><i class="fas fa-check-circle"></i></div>
                                 <span class="step-label">Delivered</span>
                             </div>
@@ -678,6 +691,11 @@ function renderOrders() {
                         <strong>₱${order.total.toLocaleString()}</strong>
                     </div>
                     <div class="order-actions">
+                        ${order.status === 'pending' ? `
+                            <button class="btn-danger btn-sm" onclick="cancelOrder('${order.id}')" title="Cancel this order">
+                                <i class="fas fa-times-circle"></i> Cancel
+                            </button>
+                        ` : ''}
                         ${order.status !== 'cancelled' ? `
                             <button class="btn-outline btn-sm" onclick="openOrderTracking('${order.id}')">
                                 <i class="fas fa-map-marker-alt"></i> Track Order
@@ -690,6 +708,9 @@ function renderOrders() {
                             <button class="btn-outline btn-sm" onclick="buyAgain('${order.id}')">
                                 <i class="fas fa-redo"></i> Buy Again
                             </button>
+                            <button class="btn-secondary btn-sm" onclick="deleteOrder('${order.id}')" title="Delete this order">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         ` : ''}
                     </div>
                 </div>
@@ -700,7 +721,8 @@ function renderOrders() {
 
 // Open Order Tracking Modal
 window.openOrderTracking = function(orderId) {
-    const order = ordersData.find(o => o.id === orderId);
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const order = orders.find(o => o.id === orderId);
     if (!order) return;
     
     const modal = document.getElementById('orderTrackingModal');
@@ -732,27 +754,41 @@ window.openOrderTracking = function(orderId) {
     `;
     
     // Populate tracking timeline
+    const statusOrder = ['pending', 'processing', 'preparing', 'shipped', 'delivered'];
+    const currentStatusIndex = statusOrder.indexOf(order.status);
+    
     const steps = [
         {
             key: 'orderPlaced',
+            statusIndex: 0,
             icon: 'fa-shopping-cart',
             title: 'Order Placed',
             ...order.tracking.orderPlaced
         },
         {
             key: 'processing',
+            statusIndex: 1,
             icon: 'fa-cog',
             title: 'Processing',
             ...order.tracking.processing
         },
         {
+            key: 'preparing',
+            statusIndex: 2,
+            icon: 'fa-box',
+            title: 'Preparing',
+            location: 'Preparing your order for shipment'
+        },
+        {
             key: 'shipping',
+            statusIndex: 3,
             icon: 'fa-truck',
             title: 'Shipping',
             ...order.tracking.shipping
         },
         {
             key: 'delivered',
+            statusIndex: 4,
             icon: 'fa-box-open',
             title: 'Delivered',
             ...order.tracking.delivered
@@ -760,7 +796,22 @@ window.openOrderTracking = function(orderId) {
     ];
     
     trackingTimeline.innerHTML = steps.map(step => {
-        const stepClass = step.completed ? 'completed' : (step.active ? 'active' : '');
+        let stepClass = '';
+        if (step.statusIndex < currentStatusIndex) {
+            stepClass = 'completed'; // Past steps - green
+        } else if (step.statusIndex === currentStatusIndex) {
+            // If delivered, show as completed (green), not active (pulsing)
+            if (order.status === 'delivered') {
+                stepClass = 'completed';
+            } else {
+                stepClass = 'active'; // Current step - pulsing
+            }
+        } else if (order.status === 'shipped' && step.key === 'delivered') {
+            // When shipped, the next step (delivered) should be pulsing
+            stepClass = 'active';
+        }
+        // Future steps have no class - will be gray by default
+        
         return `
             <div class="tracking-step ${stepClass}">
                 <div class="tracking-step-icon">
@@ -768,7 +819,7 @@ window.openOrderTracking = function(orderId) {
                 </div>
                 <div class="tracking-step-content">
                     <h4 class="tracking-step-title">${step.title}</h4>
-                    <p class="tracking-step-desc">${step.location}</p>
+                    <p class="tracking-step-desc">${step.location || 'Pending'}</p>
                     ${step.date ? `<div class="tracking-step-time"><i class="fas fa-clock"></i> ${step.date}</div>` : ''}
                 </div>
             </div>
@@ -776,11 +827,35 @@ window.openOrderTracking = function(orderId) {
     }).join('');
     
     // Update current location
-    const activeStep = steps.find(s => s.active);
-    if (activeStep) {
-        trackingLocation.textContent = activeStep.location;
-    } else if (order.status === 'delivered') {
-        trackingLocation.textContent = order.tracking.delivered.location;
+    const currentStep = steps.find(s => s.statusIndex === currentStatusIndex);
+    if (currentStep && currentStep.location) {
+        trackingLocation.textContent = currentStep.location;
+    } else {
+        trackingLocation.textContent = 'Awaiting update';
+    }
+    
+    // Add action buttons to modal
+    const modalFooter = modal.querySelector('.modal-footer');
+    if (modalFooter) {
+        let footerButtons = '';
+        
+        // Show Cancel button only for pending orders
+        if (order.status === 'pending') {
+            footerButtons += `
+                <button class="btn-danger" onclick="cancelOrder('${orderId}')" style="margin-right: 10px;">
+                    <i class="fas fa-times-circle"></i> Cancel Order
+                </button>
+            `;
+        }
+        
+        // Always show Delete button
+        footerButtons += `
+            <button class="btn-secondary" onclick="deleteOrder('${orderId}')">
+                <i class="fas fa-trash"></i> Delete Order
+            </button>
+        `;
+        
+        modalFooter.innerHTML = footerButtons;
     }
     
     modal.classList.add('active');
@@ -795,7 +870,8 @@ window.closeOrderTrackingModal = function() {
 
 // Open Order Details Modal
 window.openOrderDetails = function(orderId) {
-    const order = ordersData.find(o => o.id === orderId);
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const order = orders.find(o => o.id === orderId);
     if (!order) return;
     
     const modal = document.getElementById('orderDetailsModal');
@@ -877,7 +953,8 @@ window.closeOrderDetailsModal = function() {
 
 // Buy Again functionality
 window.buyAgain = function(orderId) {
-    const order = ordersData.find(o => o.id === orderId);
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const order = orders.find(o => o.id === orderId);
     if (!order) return;
     
     // Add all items from the order to cart
@@ -1080,9 +1157,8 @@ function initCartPanel() {
                 showNotification('Your cart is empty!', 'warning');
                 return;
             }
-            closeCartPanel();
-            // Navigate to checkout or cart section
-            document.querySelector('[data-section="cart"]')?.click();
+            // Open checkout modal
+            openCheckoutModal();
         });
     }
     
@@ -1121,12 +1197,16 @@ function updateCartPanel() {
     // Update delivery address
     updateCartAddress();
     
-    // Clear current items (except empty message)
-    const existingItems = cartItemsList.querySelectorAll('.cart-item');
-    existingItems.forEach(item => item.remove());
+    // Completely clear the cart items list
+    cartItemsList.innerHTML = '';
     
     if (cart.length === 0) {
-        if (emptyCartMessage) emptyCartMessage.style.display = 'block';
+        cartItemsList.innerHTML = `
+            <div class="empty-cart-message" id="emptyCartMessage">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+            </div>
+        `;
         if (cartCheckoutBtn) cartCheckoutBtn.disabled = true;
         if (cartSubtotal) cartSubtotal.textContent = '₱0.00';
         if (cartDeliveryFee) cartDeliveryFee.textContent = '₱0.00';
@@ -1134,18 +1214,17 @@ function updateCartPanel() {
         return;
     }
     
-    if (emptyCartMessage) emptyCartMessage.style.display = 'none';
     if (cartCheckoutBtn) cartCheckoutBtn.disabled = false;
     
     // Calculate totals
     let subtotal = 0;
     
-    // Render cart items
-    cart.forEach((item, index) => {
+    // Build cart items HTML
+    const cartItemsHTML = cart.map((item, index) => {
         const itemTotal = item.price * item.quantity;
         subtotal += itemTotal;
         
-        const cartItemHTML = `
+        return `
             <div class="cart-item">
                 <img src="${item.image || 'Photo/Belgian Double Waffle Maker.jpg'}" alt="${item.name}" class="cart-item-image">
                 <div class="cart-item-details">
@@ -1166,13 +1245,10 @@ function updateCartPanel() {
                 </button>
             </div>
         `;
-        
-        if (emptyCartMessage) {
-            emptyCartMessage.insertAdjacentHTML('beforebegin', cartItemHTML);
-        } else {
-            cartItemsList.insertAdjacentHTML('beforeend', cartItemHTML);
-        }
-    });
+    }).join('');
+    
+    // Set the HTML
+    cartItemsList.innerHTML = cartItemsHTML;
     
     // Update summary
     const deliveryFee = subtotal > 0 ? 100 : 0;
@@ -1266,6 +1342,9 @@ document.addEventListener('click', (e) => {
 });
 
 // Featured Products Rotation
+let displayFeaturedProducts; // Global reference for refreshing
+let currentStationIndex = 0; // Make station index global
+
 function initFeaturedProducts() {
     const stations = ['new-arrivals', 'best-deals', 'popular', 'pautang-deals'];
     const stationTitles = {
@@ -1275,9 +1354,7 @@ function initFeaturedProducts() {
         'pautang-deals': '<i class="fas fa-hand-holding-usd"></i> Pautang Deals'
     };
     
-    let currentStationIndex = 0;
-    
-    function displayFeaturedProducts() {
+    displayFeaturedProducts = function() {
         const featuredProductsGrid = document.getElementById('featuredProductsGrid');
         const featuredProductsTitle = document.getElementById('featuredProductsTitle');
         
@@ -1286,8 +1363,11 @@ function initFeaturedProducts() {
         // Get products from the current station
         const currentStation = stations[currentStationIndex];
         
+        // Load products from localStorage
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        
         // Check if products are available
-        if (typeof allProducts === 'undefined' || !allProducts.length) {
+        if (!products.length) {
             featuredProductsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light);">No products available</p>';
             return;
         }
@@ -1295,15 +1375,15 @@ function initFeaturedProducts() {
         // Filter products by station using badge-based filtering
         let stationProducts;
         if (currentStation === 'new-arrivals') {
-            stationProducts = allProducts.filter(p => p.badge === 'new');
+            stationProducts = products.filter(p => p.badge === 'new');
         } else if (currentStation === 'best-deals') {
-            stationProducts = allProducts.filter(p => p.badge === 'sale');
+            stationProducts = products.filter(p => p.badge === 'sale');
         } else if (currentStation === 'popular') {
-            stationProducts = allProducts.filter(p => p.badge === 'hot');
+            stationProducts = products.filter(p => p.badge === 'hot');
         } else if (currentStation === 'pautang-deals') {
-            stationProducts = allProducts.filter(p => p.badge === 'bundle' || p.station === 'pautang-deals');
+            stationProducts = products.filter(p => p.badge === 'bundle' || p.station === 'pautang-deals');
         } else {
-            stationProducts = allProducts;
+            stationProducts = products;
         }
         
         // Shuffle and get 4 random products
@@ -1381,7 +1461,15 @@ function initFeaturedProducts() {
         
         // Move to next station
         currentStationIndex = (currentStationIndex + 1) % stations.length;
-    }
+    };
+    
+    // Create a refresh function that updates current station without advancing
+    window.refreshFeaturedProducts = function() {
+        // Temporarily move back one station
+        currentStationIndex = (currentStationIndex - 1 + stations.length) % stations.length;
+        // Then call display which will advance and show current
+        displayFeaturedProducts();
+    };
     
     // Helper function to generate star rating HTML
     function getStarsHTML(rating) {
@@ -1423,7 +1511,8 @@ window.toggleWishlistDashboard = function(productId, event) {
         event.stopPropagation();
     }
     
-    const product = allProducts.find(p => p.id === productId);
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const product = products.find(p => p.id === productId);
     if (!product) return;
     
     let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
@@ -1450,6 +1539,17 @@ window.toggleWishlistDashboard = function(productId, event) {
     // Update wishlist badge
     if (typeof updateFavoritesBadge === 'function') {
         updateFavoritesBadge();
+    }
+    
+    // Update wishlist section
+    if (typeof loadWishlistSection === 'function') {
+        loadWishlistSection();
+    }
+    
+    // Update sidebar badge
+    const wishlistBadge = document.querySelector('.nav-item[data-section="wishlist"] .nav-badge');
+    if (wishlistBadge) {
+        wishlistBadge.textContent = wishlist.length;
     }
     
     // Re-render featured products to update heart icon
@@ -1491,14 +1591,29 @@ window.viewProduct = function(productId) {
 
 // Add product to cart from featured section
 window.addProductToCart = function(productId) {
-    const product = allProducts.find(p => p.id === productId);
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const product = products.find(p => p.id === productId);
     if (!product) return;
+    
+    // Check stock availability
+    if (!product.available || product.stock === 0) {
+        showNotification('Product is out of stock!', 'error');
+        return;
+    }
     
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingItem = cart.find(item => item.id === productId);
     
+    // Check if adding would exceed stock
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    if (currentQuantity + 1 > product.stock) {
+        showNotification(`Only ${product.stock} items available in stock!`, 'warning');
+        return;
+    }
+    
     if (existingItem) {
         existingItem.quantity += 1;
+        showNotification(`${product.name} quantity updated in cart!`, 'success');
     } else {
         cart.push({
             id: product.id,
@@ -1507,12 +1622,12 @@ window.addProductToCart = function(productId) {
             image: product.image,
             quantity: 1
         });
+        showNotification(`${product.name} added to cart!`, 'success');
     }
     
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartBadges();
     updateCartPanel();
-    showNotification('Product added to cart!', 'success');
 };
 
 // Load Delivered Orders in Dashboard
@@ -1520,8 +1635,9 @@ function loadDeliveredOrders() {
     const deliveredOrdersList = document.getElementById('deliveredOrdersList');
     if (!deliveredOrdersList) return;
     
-    // Check if ordersData exists
-    if (typeof ordersData === 'undefined' || !ordersData.length) {
+    // Load orders from localStorage
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    if (!orders || orders.length === 0) {
         deliveredOrdersList.innerHTML = `
             <div style="text-align: center; padding: 40px 20px;">
                 <i class="fas fa-box-open" style="font-size: 3rem; color: var(--text-light); margin-bottom: 15px;"></i>
@@ -1532,7 +1648,7 @@ function loadDeliveredOrders() {
     }
     
     // Filter only delivered orders
-    const deliveredOrders = ordersData.filter(order => order.status === 'delivered').slice(0, 3);
+    const deliveredOrders = orders.filter(order => order.status === 'delivered').slice(0, 3);
     
     if (deliveredOrders.length === 0) {
         deliveredOrdersList.innerHTML = `
@@ -1735,28 +1851,89 @@ function initFavoritesPanel() {
         closeFavoritesPanel();
     });
     
+    // Dropdown toggle
+    document.addEventListener('click', (e) => {
+        const filterBtn = document.getElementById('favoritesFilterBtn');
+        const filterMenu = document.getElementById('favoritesFilterMenu');
+        
+        if (e.target.closest('#favoritesFilterBtn')) {
+            e.stopPropagation();
+            filterBtn?.classList.toggle('active');
+            filterMenu?.classList.toggle('active');
+        } else if (!e.target.closest('.favorites-filter-menu')) {
+            filterBtn?.classList.remove('active');
+            filterMenu?.classList.remove('active');
+        }
+        
+        // Handle filter option click
+        if (e.target.closest('.filter-option')) {
+            e.stopPropagation();
+            const option = e.target.closest('.filter-option');
+            const category = option.getAttribute('data-category');
+            
+            // Update button text
+            const currentFilterText = document.getElementById('currentFilterText');
+            if (currentFilterText) {
+                const categoryNames = {
+                    'all': 'All',
+                    'new': 'New Arrivals',
+                    'sale': 'Best Deals',
+                    'hot': 'Popular',
+                    'bundle': 'Pautang Deals'
+                };
+                currentFilterText.textContent = categoryNames[category] || 'All';
+            }
+            
+            // Close dropdown
+            filterBtn?.classList.remove('active');
+            filterMenu?.classList.remove('active');
+            
+            // Update panel with filter
+            updateFavoritesPanel(category);
+        }
+    });
+    
     // Update badge on load
     updateFavoritesBadge();
 }
 
-function updateFavoritesPanel() {
+function updateFavoritesPanel(filterCategory = 'all') {
     const favoritesItemsList = document.getElementById('favoritesItemsList');
     if (!favoritesItemsList) return;
     
-    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const products = JSON.parse(localStorage.getItem('products')) || [];
     
-    if (wishlist.length === 0) {
+    // Get full product details with badge info
+    let wishlistWithBadges = wishlist.map(item => {
+        const fullProduct = products.find(p => p.id === item.id);
+        return {
+            ...item,
+            badge: fullProduct ? fullProduct.badge : null
+        };
+    });
+    
+    // Filter by category
+    if (filterCategory !== 'all') {
+        wishlistWithBadges = wishlistWithBadges.filter(item => item.badge === filterCategory);
+    }
+    
+    if (wishlistWithBadges.length === 0) {
+        const emptyMessage = filterCategory === 'all' 
+            ? 'No favorites yet' 
+            : `No ${getCategoryName(filterCategory)} in favorites`;
+        
         favoritesItemsList.innerHTML = `
             <div style="text-align: center; padding: 60px 20px;">
                 <i class="fas fa-heart" style="font-size: 4rem; color: var(--text-light); margin-bottom: 15px;"></i>
-                <p style="color: var(--text-light); font-size: 1.1rem;">No favorites yet</p>
+                <p style="color: var(--text-light); font-size: 1.1rem;">${emptyMessage}</p>
                 <p style="color: var(--text-light); font-size: 0.9rem;">Heart products from the shop to see them here!</p>
             </div>
         `;
         return;
     }
     
-    favoritesItemsList.innerHTML = wishlist.map(item => `
+    favoritesItemsList.innerHTML = wishlistWithBadges.map(item => `
         <div class="favorite-item" data-product-id="${item.id}">
             <div class="favorite-item-image">
                 <img src="${item.image}" alt="${item.name}">
@@ -1777,12 +1954,24 @@ function updateFavoritesPanel() {
     `).join('');
 }
 
+function getCategoryName(badge) {
+    const names = {
+        'new': 'New Arrivals',
+        'sale': 'Best Deals',
+        'hot': 'Popular',
+        'bundle': 'Pautang Deals'
+    };
+    return names[badge] || 'products';
+}
+
 function updateFavoritesBadge() {
-    const badge = document.querySelector('#headerFavoritesBtn .badge');
-    if (!badge) return;
-    
     const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    badge.textContent = wishlist.length;
+    
+    // Update all wishlist badges
+    const wishlistBadges = document.querySelectorAll('.wishlist-badge');
+    wishlistBadges.forEach(badge => {
+        badge.textContent = wishlist.length;
+    });
 }
 
 function removeFavorite(productId) {
@@ -1793,6 +1982,41 @@ function removeFavorite(productId) {
     updateFavoritesPanel();
     updateFavoritesBadge();
     showNotification('Removed from favorites', 'success');
+    
+    // Update sidebar badge
+    const wishlistBadge = document.querySelector('.nav-item[data-section="wishlist"] .nav-badge');
+    if (wishlistBadge) {
+        wishlistBadge.textContent = wishlist.length;
+    }
+    
+    // Update heart icons in Featured Products section
+    const currentGrid = document.getElementById('featuredProductsGrid');
+    if (currentGrid) {
+        const buttons = currentGrid.querySelectorAll('.btn-add-wishlist');
+        buttons.forEach(btn => {
+            const btnProductId = parseInt(btn.getAttribute('onclick').match(/\d+/)[0]);
+            if (btnProductId === productId) {
+                const icon = btn.querySelector('i');
+                btn.classList.remove('active');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        });
+    }
+    
+    // Update heart icons in Shop section if it exists
+    const shopGrid = document.getElementById('productsGrid');
+    if (shopGrid && typeof renderProducts === 'function') {
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const searchInput = document.getElementById('productSearch');
+        
+        renderProducts(
+            categoryFilter ? categoryFilter.value : 'all',
+            sortFilter ? sortFilter.value : 'featured',
+            searchInput ? searchInput.value : ''
+        );
+    }
 }
 
 function addFavoriteToCart(productId) {
@@ -1885,12 +2109,13 @@ function initNotificationsPanel() {
 }
 
 function generateOrderNotifications() {
-    if (typeof ordersData === 'undefined') return;
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    if (!orders || orders.length === 0) return;
     
     let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
     
     // Only generate notifications for recent orders (avoid duplicates)
-    ordersData.forEach(order => {
+    orders.forEach(order => {
         const existingNotif = notifications.find(n => n.orderId === order.id && n.status === order.status);
         if (existingNotif) return; // Already notified
         
@@ -2299,6 +2524,35 @@ function removeFromWishlistSection(productId) {
     if (wishlistBadge) {
         wishlistBadge.textContent = wishlist.length;
     }
+    
+    // Update heart icons in Featured Products section
+    const currentGrid = document.getElementById('featuredProductsGrid');
+    if (currentGrid) {
+        const buttons = currentGrid.querySelectorAll('.btn-add-wishlist');
+        buttons.forEach(btn => {
+            const btnProductId = parseInt(btn.getAttribute('onclick').match(/\d+/)[0]);
+            if (btnProductId === productId) {
+                const icon = btn.querySelector('i');
+                btn.classList.remove('active');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        });
+    }
+    
+    // Update heart icons in Shop section if it exists
+    const shopGrid = document.getElementById('productsGrid');
+    if (shopGrid && typeof renderProducts === 'function') {
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const searchInput = document.getElementById('productSearch');
+        
+        renderProducts(
+            categoryFilter ? categoryFilter.value : 'all',
+            sortFilter ? sortFilter.value : 'featured',
+            searchInput ? searchInput.value : ''
+        );
+    }
 }
 
 function addToCartFromWishlist(productId) {
@@ -2314,13 +2568,16 @@ function addToCartFromWishlist(productId) {
 // ========================================
 
 function openProductQuickView(productId) {
+    // Load products from localStorage
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    
     // Check if products data exists
-    if (typeof allProducts === 'undefined' || !allProducts) {
+    if (!products.length) {
         showNotification('Product data not available', 'error');
         return;
     }
     
-    const product = allProducts.find(p => p.id === productId);
+    const product = products.find(p => p.id === productId);
     if (!product) return;
     
     // Create modal if it doesn't exist
@@ -2452,9 +2709,10 @@ function initAdvancedSearch() {
 }
 
 function showSearchSuggestions(query) {
-    if (typeof allProducts === 'undefined') return;
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    if (products.length === 0) return;
     
-    const suggestions = allProducts.filter(p => 
+    const suggestions = products.filter(p => 
         p.name.toLowerCase().includes(query.toLowerCase()) ||
         (p.description && p.description.toLowerCase().includes(query.toLowerCase()))
     ).slice(0, 5);
@@ -2489,6 +2747,364 @@ function hideSearchSuggestions() {
     if (suggestionsBox) {
         suggestionsBox.style.display = 'none';
     }
+}
+
+// ========================================
+// CHECKOUT FUNCTIONALITY
+// ========================================
+
+function openCheckoutModal() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) return;
+    
+    const modal = document.getElementById('checkoutModal');
+    const checkoutSummary = document.getElementById('checkoutSummary');
+    
+    // Calculate totals
+    let subtotal = 0;
+    cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+    });
+    const deliveryFee = 100;
+    const total = subtotal + deliveryFee;
+    
+    // Render order summary
+    checkoutSummary.innerHTML = `
+        <h3><i class="fas fa-shopping-bag"></i> Order Summary</h3>
+        <div class="checkout-items">
+            ${cart.map(item => `
+                <div class="checkout-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="checkout-item-details">
+                        <h4>${item.name}</h4>
+                        <p>₱${item.price.toLocaleString()} × ${item.quantity}</p>
+                    </div>
+                    <div class="checkout-item-total">
+                        ₱${(item.price * item.quantity).toLocaleString()}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        <div class="checkout-totals">
+            <div class="checkout-total-row">
+                <span>Subtotal:</span>
+                <span>₱${subtotal.toLocaleString()}</span>
+            </div>
+            <div class="checkout-total-row">
+                <span>Delivery Fee:</span>
+                <span>₱${deliveryFee.toLocaleString()}</span>
+            </div>
+            <div class="checkout-total-row final-total">
+                <span>Total:</span>
+                <span>₱${total.toLocaleString()}</span>
+            </div>
+        </div>
+    `;
+    
+    // Update available balance display
+    const balance = parseFloat(localStorage.getItem('userBalance') || '50000');
+    const availableBalance = document.getElementById('availableBalance');
+    if (availableBalance) {
+        availableBalance.textContent = `₱${balance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+    }
+    
+    modal.classList.add('active');
+}
+
+function closeCheckoutModal() {
+    const modal = document.getElementById('checkoutModal');
+    modal.classList.remove('active');
+}
+
+function confirmCheckout() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+    
+    if (!paymentMethod) {
+        showNotification('Please select a payment method', 'warning');
+        return;
+    }
+    
+    // Calculate total
+    let subtotal = 0;
+    cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+    });
+    const deliveryFee = 100;
+    const total = subtotal + deliveryFee;
+    
+    // Check balance if paying with account balance
+    if (paymentMethod === 'balance') {
+        const balance = parseFloat(localStorage.getItem('userBalance') || '50000');
+        if (balance < total) {
+            showNotification('Insufficient balance! Please use Cash on Delivery.', 'error');
+            return;
+        }
+    }
+    
+    // Update product stocks
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    
+    cart.forEach(cartItem => {
+        const productIndex = products.findIndex(p => p.id === cartItem.id);
+        if (productIndex !== -1) {
+            products[productIndex].stock -= cartItem.quantity;
+            if (products[productIndex].stock < 0) {
+                products[productIndex].stock = 0;
+            }
+            products[productIndex].available = products[productIndex].stock > 0;
+        }
+    });
+    
+    // Update balance if paying with account balance
+    if (paymentMethod === 'balance') {
+        const currentBalance = parseFloat(localStorage.getItem('userBalance') || '50000');
+        const newBalance = currentBalance - total;
+        localStorage.setItem('userBalance', newBalance.toString());
+        
+        // Update balance display in cart panel
+        const balanceAmount = document.getElementById('cartBalanceAmount');
+        if (balanceAmount) {
+            balanceAmount.textContent = `₱${newBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        }
+    }
+    
+    // Save updated products to localStorage
+    localStorage.setItem('products', JSON.stringify(products));
+    
+    // Create order
+    const order = {
+        id: 'ORD-' + Date.now(),
+        date: new Date().toISOString(),
+        items: cart,
+        subtotal: subtotal,
+        deliveryFee: deliveryFee,
+        total: total,
+        paymentMethod: paymentMethod === 'balance' ? 'Account Balance' : 'Cash on Delivery',
+        status: 'pending'
+    };
+    
+    // Save order
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders.push(order);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Clear cart
+    localStorage.setItem('cart', JSON.stringify([]));
+    
+    // Close modal and cart panel
+    closeCheckoutModal();
+    closeCartPanel();
+    
+    // Update UI
+    updateCartBadges();
+    updateCartPanel();
+    
+    // Refresh featured products to show updated stock (without advancing station)
+    if (typeof refreshFeaturedProducts === 'function') {
+        refreshFeaturedProducts();
+    }
+    
+    // Re-render products if on shop page
+    if (typeof renderProducts === 'function') {
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const searchInput = document.getElementById('productSearch');
+        
+        renderProducts(
+            categoryFilter ? categoryFilter.value : 'all',
+            sortFilter ? sortFilter.value : 'featured',
+            searchInput ? searchInput.value : ''
+        );
+    }
+    
+    // Show success message
+    const paymentText = paymentMethod === 'balance' ? 'paid with account balance' : 'will be paid on delivery';
+    showNotification(`Order placed successfully! (${order.id}) - ${paymentText}`, 'success');
+    
+    // Start order status progression
+    startOrderStatusProgression(order.id);
+}
+
+// Automatic Order Status Progression
+function startOrderStatusProgression(orderId) {
+    // Start with showing the initial pending message
+    showNotification('Waiting for the order to be accepted.', 'info');
+    
+    const statusSequence = [
+        { status: 'processing', message: 'Order accepted - Your product is now being processed.' },
+        { status: 'preparing', message: 'Preparing your order for shipment.' },
+        { status: 'shipped', message: 'Package picked up. Please wait for delivery.' },
+        { status: 'delivered', message: 'Package has been delivered.' }
+    ];
+    let currentStatusIndex = 0;
+    
+    const progressInterval = setInterval(() => {
+        if (currentStatusIndex >= statusSequence.length) {
+            clearInterval(progressInterval);
+            
+            // After delivered, wait 24 hours then auto-delete the order
+            setTimeout(() => {
+                deleteDeliveredOrder(orderId);
+            }, 86400000); // 24 hours = 86400000 milliseconds
+            return;
+        }
+        
+        const { status: newStatus, message } = statusSequence[currentStatusIndex];
+        
+        // Update order status in localStorage
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        const orderIndex = orders.findIndex(o => o.id === orderId);
+        
+        if (orderIndex !== -1) {
+            orders[orderIndex].status = newStatus;
+            
+            // Add additional properties based on status
+            if (newStatus === 'processing' && currentStatusIndex === 0) {
+                orders[orderIndex].eta = new Date(Date.now() + 50 * 60 * 1000).toISOString(); // 50 minutes from now
+            } else if (newStatus === 'shipped') {
+                orders[orderIndex].trackingEnabled = true;
+                orders[orderIndex].courierName = 'Express Delivery';
+            }
+            
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // Refresh orders display if on orders section
+            const ordersSection = document.getElementById('orders-section');
+            if (ordersSection && ordersSection.classList.contains('active')) {
+                renderOrders();
+            }
+            
+            // Show notification with detailed message
+            showNotification(message, 'success');
+        }
+        
+        currentStatusIndex++;
+    }, 25000); // 25 seconds per stage
+}
+
+// Cancel Order (only for pending orders)
+window.cancelOrder = function(orderId) {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const order = orders.find(o => o.id === orderId);
+    
+    if (!order) {
+        showNotification('Order not found', 'error');
+        return;
+    }
+    
+    if (order.status !== 'pending') {
+        showNotification('Cannot cancel order - already processing', 'error');
+        return;
+    }
+    
+    // Confirm cancellation
+    if (!confirm(`Are you sure you want to cancel order ${orderId}?`)) {
+        return;
+    }
+    
+    // Restore stock for cancelled order
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    order.items.forEach(item => {
+        const productIndex = products.findIndex(p => p.id === item.id);
+        if (productIndex !== -1) {
+            products[productIndex].stock += item.quantity;
+        }
+    });
+    localStorage.setItem('products', JSON.stringify(products));
+    
+    // Remove order from localStorage
+    const updatedOrders = orders.filter(o => o.id !== orderId);
+    localStorage.setItem('orders', JSON.stringify(updatedOrders));
+    
+    // Close modal and refresh
+    closeOrderTrackingModal();
+    renderOrders();
+    
+    showNotification('Order cancelled successfully. Stock has been restored.', 'success');
+};
+
+// Delete Order (manual deletion by user)
+window.deleteOrder = function(orderId) {
+    if (!confirm(`Are you sure you want to delete order ${orderId}? This action cannot be undone.`)) {
+        return;
+    }
+    
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    orders = orders.filter(o => o.id !== orderId);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Close modal and refresh
+    closeOrderTrackingModal();
+    renderOrders();
+    
+    showNotification('Order deleted successfully', 'info');
+};
+
+// Delete delivered order from localStorage (auto-deletion)
+function deleteDeliveredOrder(orderId) {
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    
+    // Remove the delivered order
+    orders = orders.filter(o => o.id !== orderId);
+    localStorage.setItem('orders', JSON.stringify(orders));
+    
+    // Refresh orders display if on orders section
+    const ordersSection = document.getElementById('orders-section');
+    if (ordersSection && ordersSection.classList.contains('active')) {
+        renderOrders();
+        showNotification('Delivered order has been removed from your list', 'info');
+    }
+    
+    console.log(`Order ${orderId} removed after delivery`);
+}
+
+// Reviews Modal Close Functionality
+const closeReviewsModalBtn = document.getElementById('closeReviewsModal');
+const reviewsModal = document.getElementById('reviewsModal');
+
+if (closeReviewsModalBtn) {
+    closeReviewsModalBtn.addEventListener('click', () => {
+        if (typeof closeReviewsModal === 'function') {
+            closeReviewsModal();
+        }
+    });
+}
+
+// Close reviews modal when clicking outside
+if (reviewsModal) {
+    reviewsModal.addEventListener('click', (e) => {
+        if (e.target === reviewsModal) {
+            if (typeof closeReviewsModal === 'function') {
+                closeReviewsModal();
+            }
+        }
+    });
+}
+
+// Update Category Counts
+function updateCategoryCounts() {
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    
+    // Count products by category
+    const categoryCounts = {};
+    products.forEach(product => {
+        if (product.category) {
+            categoryCounts[product.category] = (categoryCounts[product.category] || 0) + 1;
+        }
+    });
+    
+    // Update each category card
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach(card => {
+        const category = card.getAttribute('data-category');
+        const itemCountElement = card.querySelector('.item-count');
+        
+        if (category && itemCountElement) {
+            const count = categoryCounts[category] || 0;
+            itemCountElement.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
+        }
+    });
 }
 
 // Console welcome message

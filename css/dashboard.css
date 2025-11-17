@@ -1003,6 +1003,11 @@
     border-bottom: 2px solid #007bff;
 }
 
+.order-card[data-order-status="preparing"] .order-card-header {
+    background: linear-gradient(135deg, #e2e3e5 0%, #d6d8db 100%);
+    border-bottom: 2px solid #6c757d;
+}
+
 .order-card[data-order-status="pending"] .order-card-header {
     background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
     border-bottom: 2px solid #ffc107;
@@ -1011,6 +1016,33 @@
 .order-card[data-order-status="cancelled"] .order-card-header {
     background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
     border-bottom: 2px solid #dc3545;
+}
+
+.order-status-message {
+    padding: 15px 25px;
+    background: var(--light-bg);
+    border-left: 4px solid var(--primary);
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.order-status-message i {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.order-card[data-order-status="delivered"] .order-status-message {
+    border-left-color: var(--success);
+    background: #f0fdf4;
+}
+
+.order-card[data-order-status="delivered"] .order-status-message i {
+    color: var(--success);
 }
 
 .order-header-left {
@@ -1057,6 +1089,12 @@
     color: #004085;
 }
 
+.status-preparing {
+    background: #E2E3E5;
+    color: #383D41;
+}
+
+.status-shipped,
 .status-shipping {
     background: #D1ECF1;
     color: #0C5460;
@@ -1392,6 +1430,16 @@
 
 .modal-body {
     padding: 30px;
+}
+
+.modal-footer {
+    padding: 20px 30px;
+    background: var(--light-bg);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-radius: 0 0 20px 20px;
 }
 
 .tracking-order-info {
@@ -2933,6 +2981,100 @@ textarea.form-control {
     border-color: var(--white);
 }
 
+.favorites-filter-dropdown {
+    position: relative;
+}
+
+.favorites-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--white);
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.favorites-filter-btn:hover {
+    background: var(--light-bg);
+    border-color: var(--primary);
+}
+
+.favorites-filter-btn i:first-child {
+    font-size: 1rem;
+}
+
+.favorites-filter-btn i:last-child {
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.favorites-filter-btn.active i:last-child {
+    transform: rotate(180deg);
+}
+
+.favorites-filter-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.favorites-filter-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--white);
+    border: none;
+    color: var(--text-dark);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    text-align: left;
+}
+
+.filter-option:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+.filter-option:last-child {
+    border-radius: 0 0 8px 8px;
+}
+
+.filter-option:hover {
+    background: var(--light-bg);
+    color: var(--primary);
+}
+
+.filter-option i {
+    font-size: 0.9rem;
+    width: 20px;
+    color: var(--text-dark);
+}
+
 .favorites-items-list {
     max-height: calc(100vh - 250px);
     overflow-y: auto;
@@ -3457,6 +3599,153 @@ textarea.form-control {
 }
 
 /* ========================================
+   CHECKOUT MODAL
+   ======================================== */
+
+.checkout-modal {
+    max-width: 600px;
+}
+
+.checkout-summary h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkout-items {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.checkout-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: var(--light-bg);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.checkout-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.checkout-item-details {
+    flex: 1;
+}
+
+.checkout-item-details h4 {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin: 0 0 5px 0;
+}
+
+.checkout-item-details p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.checkout-item-total {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+}
+
+.checkout-totals {
+    border-top: 2px solid var(--border-color);
+    padding-top: 15px;
+    margin-bottom: 30px;
+}
+
+.checkout-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 1rem;
+}
+
+.checkout-total-row.final-total {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+    border-top: 2px solid var(--border-color);
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+.payment-method-section {
+    margin-bottom: 30px;
+}
+
+.payment-method-section h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.payment-option {
+    display: block;
+    cursor: pointer;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-option-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    transition: var(--transition);
+    background: var(--white);
+}
+
+.payment-option input[type="radio"]:checked + .payment-option-content {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(255, 140, 66, 0.05));
+}
+
+.payment-option-content i {
+    font-size: 2rem;
+    color: var(--primary);
+}
+
+.payment-option-content strong {
+    display: block;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+    font-size: 1rem;
+}
+
+.payment-option-content p {
+    margin: 0;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* ========================================
    RESPONSIVE IMPROVEMENTS
    ======================================== */
 
@@ -3482,4 +3771,97 @@ textarea.form-control {
     }
 }
 
+/* ============================================
+   TOAST NOTIFICATIONS
+   ============================================ */
+
+.dashboard-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10000;
+    min-width: 300px;
+    max-width: 400px;
+    transform: translateX(450px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.dashboard-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.dashboard-notification i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.dashboard-notification.notification-success {
+    border-left: 4px solid #4CAF50;
+}
+
+.dashboard-notification.notification-success i {
+    color: #4CAF50;
+}
+
+.dashboard-notification.notification-error {
+    border-left: 4px solid #f44336;
+}
+
+.dashboard-notification.notification-error i {
+    color: #f44336;
+}
+
+.dashboard-notification.notification-warning {
+    border-left: 4px solid #ff9800;
+}
+
+.dashboard-notification.notification-warning i {
+    color: #ff9800;
+}
+
+.dashboard-notification.notification-info {
+    border-left: 4px solid #2196F3;
+}
+
+.dashboard-notification.notification-info i {
+    color: #2196F3;
+}
+
+.dashboard-notification span {
+    flex: 1;
+    color: #333;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.dashboard-notification .notification-close {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.dashboard-notification .notification-close:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.dashboard-notification .notification-close i {
+    font-size: 1rem;
+}
 

@@ -2,8 +2,27 @@
 // SHOP & PRODUCT DATA
 // ============================================
 
-// Use products from products-data.js or fallback
-const products = typeof allProducts !== 'undefined' ? allProducts : [];
+// Load products from localStorage if available (to persist stock changes), otherwise use default data
+function loadProducts() {
+    const savedProducts = localStorage.getItem('products');
+    if (savedProducts) {
+        try {
+            return JSON.parse(savedProducts);
+        } catch (e) {
+            console.error('Error loading saved products:', e);
+        }
+    }
+    // First time load - filter products with badges only, then save to localStorage
+    if (typeof allProducts !== 'undefined') {
+        const productsWithBadges = allProducts.filter(p => p.badge !== null && p.badge !== undefined);
+        localStorage.setItem('products', JSON.stringify(productsWithBadges));
+        console.log(`Saved ${productsWithBadges.length} products with badges to localStorage`);
+        return productsWithBadges;
+    }
+    return [];
+}
+
+const products = loadProducts();
 
 // Current active station
 let currentStation = 'all';
@@ -12,26 +31,54 @@ let currentStation = 'all';
 // CART MANAGEMENT
 // ============================================
 
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
 function getCart() {
-    return cart;
+    return JSON.parse(localStorage.getItem('cart')) || [];
 }
 
-function saveCart() {
+function saveCart(cart) {
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartBadge();
     updateCartDisplay();
 }
 
 function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
+    console.log('addToCart called with ID:', productId);
     
+    // Reload products from localStorage to get updated stock
+    const products = loadProducts();
+    const product = products.find(p => p.id === productId);
+    
+    console.log('Product found:', product);
+    
+    if (!product) {
+        console.error('Product not found!');
+        return;
+    }
+    
+    // Check stock availability
+    if (!product.available || product.stock === 0) {
+        console.log('Out of stock');
+        showNotification('This product is out of stock', 'error');
+        return;
+    }
+    
+    // Get fresh cart from localStorage
+    let cart = getCart();
     const existingItem = cart.find(item => item.id === productId);
+    
+    // Check if adding would exceed stock
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    if (currentQuantity + 1 > product.stock) {
+        console.log('Stock limit reached');
+        showNotification(`Only ${product.stock} items available in stock`, 'warning');
+        return;
+    }
     
     if (existingItem) {
         existingItem.quantity += 1;
+        saveCart(cart);
+        console.log('Cart updated:', product.name);
+        showNotification(`${product.name} quantity updated in cart!`, 'success');
     } else {
         cart.push({
             id: product.id,
@@ -40,37 +87,48 @@ function addToCart(productId) {
             image: product.image,
             quantity: 1
         });
+        saveCart(cart);
+        console.log('Added to cart:', product.name);
+        showNotification(`${product.name} added to cart!`, 'success');
     }
     
-    saveCart();
-    showNotification(`${product.name} added to cart!`, 'success');
+    // Update cart badges and panel if available
+    if (typeof updateCartBadges === 'function') {
+        updateCartBadges();
+    }
+    if (typeof updateCartPanel === 'function') {
+        updateCartPanel();
+    }
 }
 
 function removeFromCart(productId) {
+    let cart = getCart();
     cart = cart.filter(item => item.id !== productId);
-    saveCart();
+    saveCart(cart);
     showNotification('Item removed from cart', 'success');
 }
 
 function updateQuantity(productId, change) {
+    let cart = getCart();
     const item = cart.find(item => item.id === productId);
     if (!item) return;
     
     item.quantity += change;
     
     if (item.quantity <= 0) {
-        removeFromCart(productId);
-    } else {
-        saveCart();
+        cart = cart.filter(i => i.id !== productId);
+        showNotification('Item removed from cart', 'success');
     }
+    
+    saveCart(cart);
 }
 
 function clearCart() {
-    cart = [];
-    saveCart();
+    saveCart([]);
 }
 
 function updateCartBadge() {
+    const cart = getCart();
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const badges = document.querySelectorAll('.cart-badge');
     badges.forEach(badge => {
@@ -80,6 +138,7 @@ function updateCartBadge() {
 }
 
 function getCartTotal() {
+    const cart = getCart();
     return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 }
 
@@ -91,6 +150,8 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
     
+    // Reload products from localStorage to get updated stock
+    const products = loadProducts();
     let filteredProducts = [...products];
     
     // Filter by station with specific badge requirements
@@ -106,7 +167,10 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
     } else if (currentStation === 'pautang-deals') {
         // Pautang Deals: Only bundle products
         filteredProducts = filteredProducts.filter(p => p.badge === 'bundle' || p.station === 'pautang-deals');
-    } else if (currentStation !== 'all') {
+    } else if (currentStation === 'all') {
+        // All Products: Show all products with badges (already filtered in localStorage)
+        // No additional filtering needed
+    } else {
         // Other stations use station field
         filteredProducts = filteredProducts.filter(p => p.station === currentStation || p.station === 'all');
     }
@@ -243,6 +307,9 @@ function updateCartDisplay() {
     const cartItems = document.getElementById('cartItems');
     if (!cartItems) return;
     
+    // Get cart from localStorage
+    const cart = getCart();
+    
     if (cart.length === 0) {
         cartItems.innerHTML = `
             <div class="cart-empty">
@@ -371,6 +438,9 @@ function toggleWishlist(productId, event) {
 function addToWishlist(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
+    
+    // Always get fresh wishlist from localStorage
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
     
     if (wishlist.find(item => item.id === productId)) {
         showNotification('Item already in wishlist', 'info');
@@ -697,4 +767,61 @@ function initStationTabs() {
             renderProducts(category, sort, search);
         });
     });
+}
+
+// ============================================
+// NOTIFICATION SYSTEM (Fallback if dashboard.js not loaded)
+// ============================================
+
+if (typeof showNotification === 'undefined') {
+    window.showNotification = function(message, type = 'info') {
+        console.log('showNotification called:', message, type);
+        
+        // Remove existing notifications
+        const existingNotification = document.querySelector('.dashboard-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `dashboard-notification notification-${type}`;
+        
+        const icon = type === 'success' ? 'fa-check-circle' : 
+                     type === 'error' ? 'fa-exclamation-circle' :
+                     type === 'warning' ? 'fa-exclamation-triangle' :
+                     'fa-info-circle';
+        
+        notification.innerHTML = `
+            <i class="fas ${icon}"></i>
+            <span>${message}</span>
+            <button class="notification-close"><i class="fas fa-times"></i></button>
+        `;
+        
+        console.log('Appending notification to body');
+        document.body.appendChild(notification);
+        
+        // Show notification
+        setTimeout(() => {
+            console.log('Adding show class');
+            notification.classList.add('show');
+        }, 100);
+        
+        // Close button
+        const closeBtn = notification.querySelector('.notification-close');
+        closeBtn.addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        });
+        
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    };
 }
