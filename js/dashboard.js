@@ -1267,10 +1267,11 @@ document.addEventListener('click', (e) => {
 
 // Featured Products Rotation
 function initFeaturedProducts() {
-    const stations = ['new-arrivals', 'best-deals', 'pautang-deals'];
+    const stations = ['new-arrivals', 'best-deals', 'popular', 'pautang-deals'];
     const stationTitles = {
         'new-arrivals': '<i class="fas fa-star"></i> New Arrivals',
         'best-deals': '<i class="fas fa-fire"></i> Best Deals',
+        'popular': '<i class="fas fa-trophy"></i> Popular',
         'pautang-deals': '<i class="fas fa-hand-holding-usd"></i> Pautang Deals'
     };
     
@@ -1291,8 +1292,19 @@ function initFeaturedProducts() {
             return;
         }
         
-        // Filter products by station
-        let stationProducts = allProducts.filter(p => p.station === currentStation || p.station === 'all');
+        // Filter products by station using badge-based filtering
+        let stationProducts;
+        if (currentStation === 'new-arrivals') {
+            stationProducts = allProducts.filter(p => p.badge === 'new');
+        } else if (currentStation === 'best-deals') {
+            stationProducts = allProducts.filter(p => p.badge === 'sale');
+        } else if (currentStation === 'popular') {
+            stationProducts = allProducts.filter(p => p.badge === 'hot');
+        } else if (currentStation === 'pautang-deals') {
+            stationProducts = allProducts.filter(p => p.badge === 'bundle' || p.station === 'pautang-deals');
+        } else {
+            stationProducts = allProducts;
+        }
         
         // Shuffle and get 4 random products
         stationProducts = stationProducts.sort(() => 0.5 - Math.random()).slice(0, 4);
@@ -1304,29 +1316,65 @@ function initFeaturedProducts() {
         featuredProductsGrid.style.opacity = '0';
         
         setTimeout(() => {
-            featuredProductsGrid.innerHTML = stationProducts.map(product => `
-                <div class="featured-product-item" onclick="viewProduct(${product.id})">
-                    <div class="featured-product-image">
-                        <img src="${product.image}" alt="${product.name}">
-                        ${product.oldPrice ? '<div class="featured-product-badge">Sale</div>' : ''}
-                    </div>
-                    <div class="featured-product-info">
-                        <h3 class="featured-product-name">${product.name}</h3>
-                        <div class="featured-product-price">
-                            ₱${product.price.toLocaleString()}
-                            ${product.oldPrice ? `<span class="featured-product-old-price">₱${product.oldPrice.toLocaleString()}</span>` : ''}
-                        </div>
-                        <div class="featured-product-rating">
-                            ${getStarsHTML(product.rating)}
-                            <span>(${product.rating})</span>
-                        </div>
-                        <button class="featured-add-to-cart" onclick="event.stopPropagation(); addProductToCart(${product.id})">
-                            <i class="fas fa-shopping-cart"></i>
-                            Add to Cart
+            featuredProductsGrid.innerHTML = stationProducts.map(product => {
+                // Determine badge type
+                let badgeHTML = '';
+                if (product.badge === 'new') {
+                    badgeHTML = '<div class="product-badge new">NEW</div>';
+                } else if (product.badge === 'hot') {
+                    badgeHTML = '<div class="product-badge hot">HOT</div>';
+                } else if (product.badge === 'sale') {
+                    badgeHTML = '<div class="product-badge sale">SALE</div>';
+                } else if (product.badge === 'bundle') {
+                    badgeHTML = '<div class="product-badge bundle">BUNDLE</div>';
+                }
+                
+                // Stock status
+                const stockClass = product.stock === 0 ? 'out' : (product.stock <= 5 ? 'low' : '');
+                const stockText = product.stock === 0 ? 'Out of Stock' : product.stock;
+                
+                // Availability badge
+                const availabilityHTML = product.available 
+                    ? '<div class="product-availability in-stock"><i class="fas fa-check-circle"></i> Available</div>'
+                    : '<div class="product-availability out-of-stock"><i class="fas fa-times-circle"></i> Not Available</div>';
+                
+                return `
+                    <div class="product-card" data-product-id="${product.id}">
+                        ${badgeHTML}
+                        <button class="btn-add-wishlist ${isInWishlistDashboard(product.id) ? 'active' : ''}" onclick="toggleWishlistDashboard(${product.id}, event)">
+                            <i class="${isInWishlistDashboard(product.id) ? 'fas' : 'far'} fa-heart"></i>
                         </button>
+                        <div class="product-image">
+                            <img src="${product.image}" alt="${product.name}">
+                            ${availabilityHTML}
+                        </div>
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <p class="product-description">${product.description}</p>
+                            <div class="product-rating" style="cursor: pointer;" title="Click to see all reviews">
+                                ${getStarsHTML(product.rating)}
+                                <span>(${product.rating})</span>
+                            </div>
+                            <div class="product-stock">
+                                <span class="stock-label">Stock:</span>
+                                <span class="stock-value ${stockClass}">${stockText}</span>
+                            </div>
+                            <div class="product-price">
+                                <span class="price">₱${product.price.toLocaleString()}</span>
+                                ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice.toLocaleString()}</span>` : ''}
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn-add-cart" onclick="addProductToCart(${product.id})" ${!product.available || product.stock === 0 ? 'disabled' : ''}>
+                                    <i class="fas fa-shopping-cart"></i> ${product.available && product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                                </button>
+                                <button class="btn-view-reviews" onclick="viewProduct(${product.id})">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
             featuredProductsGrid.style.opacity = '1';
         }, 300);
@@ -1363,6 +1411,68 @@ function initFeaturedProducts() {
     // Rotate every 10 seconds
     setInterval(displayFeaturedProducts, 10000);
 }
+
+// Wishlist helper functions for featured products
+function isInWishlistDashboard(productId) {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    return wishlist.some(item => item.id === productId);
+}
+
+window.toggleWishlistDashboard = function(productId, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
+    
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const existingIndex = wishlist.findIndex(item => item.id === productId);
+    
+    if (existingIndex !== -1) {
+        // Remove from wishlist
+        wishlist.splice(existingIndex, 1);
+        showNotification(`${product.name} removed from wishlist`, 'info');
+    } else {
+        // Add to wishlist
+        wishlist.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            description: product.description || 'Premium bakery equipment'
+        });
+        showNotification(`${product.name} added to wishlist!`, 'success');
+    }
+    
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    
+    // Update wishlist badge
+    if (typeof updateFavoritesBadge === 'function') {
+        updateFavoritesBadge();
+    }
+    
+    // Re-render featured products to update heart icon
+    const currentGrid = document.getElementById('featuredProductsGrid');
+    if (currentGrid) {
+        const buttons = currentGrid.querySelectorAll('.btn-add-wishlist');
+        buttons.forEach(btn => {
+            const btnProductId = parseInt(btn.getAttribute('onclick').match(/\d+/)[0]);
+            if (btnProductId === productId) {
+                const icon = btn.querySelector('i');
+                if (existingIndex !== -1) {
+                    btn.classList.remove('active');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                } else {
+                    btn.classList.add('active');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                }
+            }
+        });
+    }
+};
 
 // View product details (navigate to shop section)
 window.viewProduct = function(productId) {

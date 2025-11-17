@@ -93,8 +93,21 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
     
     let filteredProducts = [...products];
     
-    // Filter by station
-    if (currentStation !== 'all') {
+    // Filter by station with specific badge requirements
+    if (currentStation === 'new-arrivals') {
+        // New Arrivals: Only products with 'new' badge
+        filteredProducts = filteredProducts.filter(p => p.badge === 'new');
+    } else if (currentStation === 'best-deals') {
+        // Best Deals: Only products with 'sale' badge
+        filteredProducts = filteredProducts.filter(p => p.badge === 'sale');
+    } else if (currentStation === 'popular') {
+        // Popular: Only products with 'hot' badge
+        filteredProducts = filteredProducts.filter(p => p.badge === 'hot');
+    } else if (currentStation === 'pautang-deals') {
+        // Pautang Deals: Only bundle products
+        filteredProducts = filteredProducts.filter(p => p.badge === 'bundle' || p.station === 'pautang-deals');
+    } else if (currentStation !== 'all') {
+        // Other stations use station field
         filteredProducts = filteredProducts.filter(p => p.station === currentStation || p.station === 'all');
     }
     
@@ -149,6 +162,8 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
             badgeHTML = '<div class="product-badge hot">HOT</div>';
         } else if (product.badge === 'sale') {
             badgeHTML = '<div class="product-badge sale">SALE</div>';
+        } else if (product.badge === 'bundle') {
+            badgeHTML = '<div class="product-badge bundle">BUNDLE</div>';
         }
         
         // Stock status
@@ -185,12 +200,14 @@ function renderProducts(filter = 'all', sort = 'featured', searchTerm = '') {
                         <span class="price">₱${product.price.toLocaleString()}</span>
                         ${product.oldPrice ? `<span class="old-price">₱${product.oldPrice.toLocaleString()}</span>` : ''}
                     </div>
-                    <button class="btn-add-cart" onclick="addToCart(${product.id})" ${!product.available || product.stock === 0 ? 'disabled' : ''}>
-                        <i class="fas fa-shopping-cart"></i> ${product.available && product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                    </button>
-                    <button class="btn-view-reviews" onclick="openReviewsModal(${product.id})">
-                        <i class="fas fa-comments"></i> View ${product.reviews ? product.reviews.length : 0} Reviews
-                    </button>
+                    <div class="product-actions">
+                        <button class="btn-add-cart" onclick="addToCart(${product.id})" ${!product.available || product.stock === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-shopping-cart"></i> ${product.available && product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
+                        <button class="btn-view-reviews" onclick="openReviewsModal(${product.id})">
+                            <i class="fas fa-comments"></i> View ${product.reviews ? product.reviews.length : 0} Reviews
+                        </button>
+                    </div>
                 </div>
             </div>
         `;

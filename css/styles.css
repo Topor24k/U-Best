@@ -880,7 +880,7 @@ a {
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 30px;
     margin-bottom: 40px;
 }
@@ -895,7 +895,6 @@ a {
 }
 
 .product-card:hover {
-    transform: translateY(-10px);
     box-shadow: var(--shadow-xl);
 }
 
@@ -1879,6 +1878,11 @@ a {
         width: 100%;
         grid-template-columns: repeat(3, 1fr);
     }
+    
+    /* Products grid - 3 columns on medium screens */
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -1929,6 +1933,11 @@ a {
     .mobile-menu-toggle {
         display: block;
         margin: 10px auto;
+    }
+    
+    /* Products grid - 2 columns on tablet */
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
     /* About Dropdown Mobile */

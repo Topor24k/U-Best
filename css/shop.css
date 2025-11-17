@@ -117,11 +117,15 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     transition: all 0.3s ease;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 2px solid transparent;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(255, 107, 53, 0.15);
+    border-color: #FF6B35;
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.15);
 }
 
 .product-badge {
@@ -151,6 +155,11 @@
     color: #333;
 }
 
+.product-badge.bundle {
+    background: linear-gradient(135deg, #9B59B6, #8E44AD);
+    color: white;
+}
+
 .product-image {
     width: 100%;
     height: 220px;
@@ -163,15 +172,13 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.product-card:hover .product-image img {
-    transform: scale(1.1);
 }
 
 .product-info {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .product-info h3 {
@@ -186,6 +193,26 @@
     color: #666;
     margin-bottom: 12px;
     line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2.7em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.product-description:hover {
+    display: block;
+    -webkit-line-clamp: unset;
+    max-height: none;
+    color: #333;
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 6px;
+    margin: -8px -8px 12px -8px;
+    padding: 8px;
 }
 
 .product-rating {
@@ -243,7 +270,6 @@
 
 .btn-add-cart:hover {
     background: linear-gradient(135deg, #E55A2B, #CC4E23);
-    transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
 }
 
@@ -357,6 +383,12 @@
 
 .stock-value.out {
     color: #F44336;
+}
+
+/* Product Actions Container - pushes buttons to bottom */
+.product-actions {
+    margin-top: auto;
+    padding-top: 10px;
 }
 
 /* Customer Reviews Button */

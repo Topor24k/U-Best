@@ -1220,21 +1220,16 @@ function renderNewArrivals() {
         return;
     }
     
-    // Filter products with 'new' badge or from new-arrivals station
-    const newArrivalsProducts = allProducts.filter(p => 
-        p.badge === 'new' || p.station === 'new-arrivals'
-    );
+    // Filter products with ONLY 'new' badge
+    const newArrivalsProducts = allProducts.filter(p => p.badge === 'new');
     
     if (newArrivalsProducts.length === 0) {
         newArrivalsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">No new arrivals at the moment.</p>';
         return;
     }
     
-    // Shuffle array to get random products
-    const shuffled = [...newArrivalsProducts].sort(() => Math.random() - 0.5);
-    
-    // Take first 4 products
-    const productsToShow = shuffled.slice(0, 4);
+    // Show maximum 8 products - don't loop if less than 8
+    const productsToShow = newArrivalsProducts.slice(0, Math.min(8, newArrivalsProducts.length));
     
     // Render products
     newArrivalsGrid.innerHTML = productsToShow.map(product => {
@@ -1316,32 +1311,14 @@ function renderNewArrivals() {
     });
 }
 
-// Rotate new arrivals every 8 seconds
-let rotationInterval;
-
-function startNewArrivalsRotation() {
-    // Initial render
-    renderNewArrivals();
-    
-    // Set up rotation interval (8 seconds)
-    rotationInterval = setInterval(() => {
-        renderNewArrivals();
-    }, 8000);
-}
-
-function stopNewArrivalsRotation() {
-    if (rotationInterval) {
-        clearInterval(rotationInterval);
-    }
-}
-
-// Initialize when DOM is ready
+// Initialize when DOM is ready - No rotation needed
 document.addEventListener('DOMContentLoaded', () => {
     // Wait a bit for products data to load
     setTimeout(() => {
         if (typeof allProducts !== 'undefined' && allProducts.length > 0) {
-            startNewArrivalsRotation();
-            console.log('✅ New Arrivals section initialized with', allProducts.filter(p => p.badge === 'new' || p.station === 'new-arrivals').length, 'products');
+            renderNewArrivals();
+            const newCount = allProducts.filter(p => p.badge === 'new').length;
+            console.log('✅ New Arrivals section initialized with', newCount, 'products (showing max 8)');
         } else {
             console.warn('⚠️ Products data not available for New Arrivals section');
         }
