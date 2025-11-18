@@ -639,20 +639,19 @@ function renderOrders() {
                     </div>
                 ` : ''}
                 <div class="order-card-body">
-                    <div class="order-products-list">
+                    <div class="order-products-compact">
                         ${displayItems.map(item => `
-                            <div class="order-product">
-                                <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x80'">
-                                <div class="order-product-details">
+                            <div class="order-product-compact">
+                                <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/60x60'">
+                                <div class="order-product-info">
                                     <h4>${item.name}</h4>
-                                    <p>Quantity: ${item.quantity}</p>
+                                    <p>Qty: ${item.quantity} × ₱${item.price.toLocaleString()}</p>
                                 </div>
-                                <div class="order-product-price">₱${item.price.toLocaleString()}</div>
                             </div>
                         `).join('')}
                         ${moreItems > 0 ? `
-                            <div class="order-more-items">
-                                <i class="fas fa-plus-circle"></i> ${moreItems} more item${moreItems > 1 ? 's' : ''} in this order
+                            <div class="order-more-items-compact">
+                                +${moreItems} more item${moreItems > 1 ? 's' : ''}
                             </div>
                         ` : ''}
                     </div>
@@ -687,7 +686,7 @@ function renderOrders() {
                 </div>
                 <div class="order-card-footer">
                     <div class="order-total">
-                        <span>Total Amount:</span>
+                        <span>Total:</span>
                         <strong>₱${order.total.toLocaleString()}</strong>
                     </div>
                     <div class="order-actions">
@@ -696,13 +695,11 @@ function renderOrders() {
                                 <i class="fas fa-times-circle"></i> Cancel
                             </button>
                         ` : ''}
-                        ${order.status !== 'cancelled' ? `
-                            <button class="btn-outline btn-sm" onclick="openOrderTracking('${order.id}')">
-                                <i class="fas fa-map-marker-alt"></i> Track Order
-                            </button>
-                        ` : ''}
+                        <button class="btn-outline btn-sm" onclick="openOrderTracking('${order.id}')">
+                            <i class="fas fa-map-marker-alt"></i> Track
+                        </button>
                         <button class="btn-primary btn-sm" onclick="openOrderDetails('${order.id}')">
-                            <i class="fas fa-eye"></i> View Details
+                            <i class="fas fa-eye"></i> Details
                         </button>
                         ${order.status === 'delivered' ? `
                             <button class="btn-outline btn-sm" onclick="buyAgain('${order.id}')">
@@ -740,7 +737,7 @@ window.openOrderTracking = function(orderId) {
             </div>
             <div class="tracking-info-item">
                 <span class="tracking-info-label">Status</span>
-                <span class="tracking-info-value">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                <span class="tracking-info-value status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
             </div>
             <div class="tracking-info-item">
                 <span class="tracking-info-label">Items</span>
@@ -750,6 +747,16 @@ window.openOrderTracking = function(orderId) {
                 <span class="tracking-info-label">Total Amount</span>
                 <span class="tracking-info-value">₱${order.total.toLocaleString()}</span>
             </div>
+            ${order.driverName ? `
+                <div class="tracking-info-item">
+                    <span class="tracking-info-label">Driver</span>
+                    <span class="tracking-info-value">${order.driverName}</span>
+                </div>
+                <div class="tracking-info-item">
+                    <span class="tracking-info-label">Driver Contact</span>
+                    <span class="tracking-info-value">${order.driverPhone}</span>
+                </div>
+            ` : ''}
         </div>
     `;
     
@@ -797,6 +804,8 @@ window.openOrderTracking = function(orderId) {
     
     trackingTimeline.innerHTML = steps.map(step => {
         let stepClass = '';
+        const trackingData = order.tracking[step.key === 'orderPlaced' ? 'orderPlaced' : step.key] || {};
+        
         if (step.statusIndex < currentStatusIndex) {
             stepClass = 'completed'; // Past steps - green
         } else if (step.statusIndex === currentStatusIndex) {
@@ -819,8 +828,8 @@ window.openOrderTracking = function(orderId) {
                 </div>
                 <div class="tracking-step-content">
                     <h4 class="tracking-step-title">${step.title}</h4>
-                    <p class="tracking-step-desc">${step.location || 'Pending'}</p>
-                    ${step.date ? `<div class="tracking-step-time"><i class="fas fa-clock"></i> ${step.date}</div>` : ''}
+                    <p class="tracking-step-desc">${trackingData.location || step.location || 'Awaiting update'}</p>
+                    ${trackingData.date ? `<div class="tracking-step-time"><i class="fas fa-clock"></i> ${trackingData.date}</div>` : ''}
                 </div>
             </div>
         `;
@@ -828,10 +837,57 @@ window.openOrderTracking = function(orderId) {
     
     // Update current location
     const currentStep = steps.find(s => s.statusIndex === currentStatusIndex);
-    if (currentStep && currentStep.location) {
+    const currentTracking = order.tracking[currentStep?.key === 'orderPlaced' ? 'orderPlaced' : currentStep?.key] || {};
+    if (currentTracking.location) {
+        trackingLocation.textContent = currentTracking.location;
+    } else if (currentStep && currentStep.location) {
         trackingLocation.textContent = currentStep.location;
     } else {
         trackingLocation.textContent = 'Awaiting update';
+    }
+    
+    // Add live map for shipped orders
+    const trackingMapContainer = document.getElementById('trackingMapContainer');
+    if (order.status === 'shipped' && order.driverLocation) {
+        trackingMapContainer.innerHTML = `
+            <div class="live-tracking-map">
+                <div class="map-header">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Live Driver Tracking</span>
+                </div>
+                <div class="map-canvas">
+                    <div class="delivery-route">
+                        <div class="route-start">
+                            <i class="fas fa-store"></i>
+                            <span>Warehouse</span>
+                        </div>
+                        <div class="route-line"></div>
+                        <div class="driver-marker" style="left: ${order.driverLocation.progress}%;">
+                            <i class="fas fa-shipping-fast"></i>
+                            <div class="driver-info">
+                                <strong>${order.driverName}</strong>
+                                <span>${Math.round(order.driverLocation.progress)}% complete</span>
+                            </div>
+                        </div>
+                        <div class="route-end">
+                            <i class="fas fa-home"></i>
+                            <span>Your Location</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-footer">
+                    <span class="tracking-location"><i class="fas fa-map-pin"></i> ${currentTracking.location || 'En route to destination'}</span>
+                </div>
+            </div>
+        `;
+    } else {
+        trackingMapContainer.innerHTML = `
+            <div class="map-placeholder">
+                <i class="fas fa-map-marked-alt"></i>
+                <p>${order.status === 'delivered' ? 'Delivery completed' : 'Live tracking will appear when order is shipped'}</p>
+                <span class="tracking-location" id="trackingLocation">${currentTracking.location || 'Awaiting update'}</span>
+            </div>
+        `;
     }
     
     // Add action buttons to modal
@@ -893,11 +949,23 @@ window.openOrderDetails = function(orderId) {
                     <span class="tracking-info-label">Status</span>
                     <span class="tracking-info-value status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
                 </div>
+                <div class="tracking-info-item">
+                    <span class="tracking-info-label">Payment Method</span>
+                    <span class="tracking-info-value">${order.paymentMethod}</span>
+                </div>
             </div>
         </div>
         
         <div class="order-details-section">
-            <h3><i class="fas fa-box"></i> Products</h3>
+            <h3><i class="fas fa-user"></i> Customer Information</h3>
+            <div style="padding: 15px; background: var(--light-bg); border-radius: 10px;">
+                <p style="margin: 5px 0; font-weight: 600;"><i class="fas fa-user-circle"></i> ${order.customerName || order.deliveryAddress?.name || 'N/A'}</p>
+                <p style="margin: 5px 0; color: var(--text-light);"><i class="fas fa-phone"></i> ${order.deliveryAddress?.phone || 'N/A'}</p>
+            </div>
+        </div>
+        
+        <div class="order-details-section">
+            <h3><i class="fas fa-box"></i> Products (${order.items.length} ${order.items.length > 1 ? 'items' : 'item'})</h3>
             <div class="order-details-products">
                 ${order.items.map(item => `
                     <div class="order-product">
@@ -906,7 +974,7 @@ window.openOrderDetails = function(orderId) {
                             <h4>${item.name}</h4>
                             <p>Quantity: ${item.quantity}</p>
                         </div>
-                        <div class="order-product-price">₱${item.price.toLocaleString()}</div>
+                        <div class="order-product-price">₱${(item.price * item.quantity).toLocaleString()}</div>
                     </div>
                 `).join('')}
             </div>
@@ -915,10 +983,10 @@ window.openOrderDetails = function(orderId) {
         <div class="order-details-section">
             <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
             <div style="padding: 15px; background: var(--light-bg); border-radius: 10px;">
-                <p style="margin: 5px 0; font-weight: 600;">${order.deliveryAddress.name}</p>
-                <p style="margin: 5px 0; color: var(--text-light);">${order.deliveryAddress.street}</p>
-                <p style="margin: 5px 0; color: var(--text-light);">${order.deliveryAddress.city}</p>
-                <p style="margin: 5px 0; color: var(--text-light);"><i class="fas fa-phone"></i> ${order.deliveryAddress.phone}</p>
+                <p style="margin: 5px 0; font-weight: 600;">${order.deliveryAddress?.name || 'N/A'}</p>
+                <p style="margin: 5px 0; color: var(--text-light);">${order.deliveryAddress?.street || 'N/A'}</p>
+                <p style="margin: 5px 0; color: var(--text-light);">${order.deliveryAddress?.city || 'N/A'}</p>
+                <p style="margin: 5px 0; color: var(--text-light);"><i class="fas fa-phone"></i> ${order.deliveryAddress?.phone || 'N/A'}</p>
             </div>
         </div>
         
@@ -926,16 +994,22 @@ window.openOrderDetails = function(orderId) {
             <h3><i class="fas fa-receipt"></i> Payment Summary</h3>
             <div class="order-details-summary">
                 <div class="summary-row">
-                    <span class="summary-label">Subtotal</span>
+                    <span class="summary-label">Subtotal (${order.items.length} ${order.items.length > 1 ? 'items' : 'item'})</span>
                     <span class="summary-value">₱${order.subtotal.toLocaleString()}</span>
                 </div>
                 <div class="summary-row">
                     <span class="summary-label">Delivery Fee</span>
                     <span class="summary-value">₱${order.delivery.toLocaleString()}</span>
                 </div>
+                <div class="summary-row summary-total">
+                    <span class="summary-label"><strong>Total Amount</strong></span>
+                    <span class="summary-value"><strong>₱${order.total.toLocaleString()}</strong></span>
+                </div>
                 <div class="summary-row">
-                    <span class="summary-label">Total Amount</span>
-                    <span class="summary-value">₱${order.total.toLocaleString()}</span>
+                    <span class="summary-label">Payment Method</span>
+                    <span class="summary-value">
+                        <span class="payment-badge">${order.paymentMethod}</span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -2872,16 +2946,37 @@ function confirmCheckout() {
     // Save updated products to localStorage
     localStorage.setItem('products', JSON.stringify(products));
     
-    // Create order
+    // Create order with complete tracking and customer info
+    const now = new Date();
     const order = {
         id: 'ORD-' + Date.now(),
-        date: new Date().toISOString(),
+        date: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        dateISO: now.toISOString(),
         items: cart,
         subtotal: subtotal,
-        deliveryFee: deliveryFee,
+        delivery: deliveryFee,
         total: total,
         paymentMethod: paymentMethod === 'balance' ? 'Account Balance' : 'Cash on Delivery',
-        status: 'pending'
+        status: 'pending',
+        customerName: 'Juan Dela Cruz',
+        deliveryAddress: {
+            name: 'Juan Dela Cruz',
+            street: '123 Bakery Street, Poblacion District',
+            city: 'Davao City, 8000',
+            phone: '+63 912 345 6789'
+        },
+        tracking: {
+            orderPlaced: {
+                completed: true,
+                date: now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                location: 'Order received and confirmed'
+            },
+            processing: { completed: false, date: null, location: null },
+            preparing: { completed: false, date: null, location: null },
+            shipping: { completed: false, date: null, location: null },
+            delivered: { completed: false, date: null, location: null }
+        },
+        driverLocation: null
     };
     
     // Save order
@@ -2957,14 +3052,53 @@ function startOrderStatusProgression(orderId) {
         const orderIndex = orders.findIndex(o => o.id === orderId);
         
         if (orderIndex !== -1) {
+            const now = new Date();
+            const timestamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            
             orders[orderIndex].status = newStatus;
             
-            // Add additional properties based on status
+            // Update tracking timestamps and locations
             if (newStatus === 'processing' && currentStatusIndex === 0) {
-                orders[orderIndex].eta = new Date(Date.now() + 50 * 60 * 1000).toISOString(); // 50 minutes from now
+                orders[orderIndex].tracking.processing = {
+                    completed: true,
+                    date: timestamp,
+                    location: 'Warehouse - Processing Center'
+                };
+                orders[orderIndex].eta = new Date(Date.now() + 50 * 60 * 1000).toISOString();
+            } else if (newStatus === 'preparing') {
+                orders[orderIndex].tracking.preparing = {
+                    completed: true,
+                    date: timestamp,
+                    location: 'Warehouse - Packing Station'
+                };
             } else if (newStatus === 'shipped') {
+                orders[orderIndex].tracking.shipping = {
+                    completed: true,
+                    date: timestamp,
+                    location: 'Out for delivery - Driver assigned'
+                };
                 orders[orderIndex].trackingEnabled = true;
                 orders[orderIndex].courierName = 'Express Delivery';
+                orders[orderIndex].driverName = 'Mark Johnson';
+                orders[orderIndex].driverPhone = '+63 917 123 4567';
+                // Initialize driver location (simulated GPS coordinates)
+                orders[orderIndex].driverLocation = {
+                    lat: 7.0731,
+                    lng: 125.6128,
+                    progress: 0 // 0-100% of delivery route
+                };
+                
+                // Start driver movement simulation
+                simulateDriverMovement(orderId);
+            } else if (newStatus === 'delivered') {
+                orders[orderIndex].tracking.delivered = {
+                    completed: true,
+                    date: timestamp,
+                    location: 'Delivered to customer'
+                };
+                if (orders[orderIndex].driverLocation) {
+                    orders[orderIndex].driverLocation.progress = 100;
+                }
             }
             
             localStorage.setItem('orders', JSON.stringify(orders));
@@ -2975,12 +3109,66 @@ function startOrderStatusProgression(orderId) {
                 renderOrders();
             }
             
+            // Refresh tracking modal if it's currently open for this order
+            const trackingModal = document.getElementById('orderTrackingModal');
+            if (trackingModal && trackingModal.classList.contains('active')) {
+                openOrderTracking(orderId);
+            }
+            
             // Show notification with detailed message
             showNotification(message, 'success');
         }
         
         currentStatusIndex++;
     }, 25000); // 25 seconds per stage
+}
+
+// Simulate driver movement during shipping
+function simulateDriverMovement(orderId) {
+    const driverInterval = setInterval(() => {
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        const orderIndex = orders.findIndex(o => o.id === orderId);
+        
+        if (orderIndex === -1 || orders[orderIndex].status !== 'shipped') {
+            clearInterval(driverInterval);
+            return;
+        }
+        
+        // Move driver 4% every second (will reach 100% in 25 seconds)
+        if (orders[orderIndex].driverLocation) {
+            orders[orderIndex].driverLocation.progress += 4;
+            
+            if (orders[orderIndex].driverLocation.progress > 100) {
+                orders[orderIndex].driverLocation.progress = 100;
+                clearInterval(driverInterval);
+            }
+            
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            // Refresh tracking modal if it's open for this specific order
+            const trackingModal = document.getElementById('orderTrackingModal');
+            if (trackingModal && trackingModal.classList.contains('active')) {
+                const trackingOrderInfo = document.getElementById('trackingOrderInfo');
+                if (trackingOrderInfo && trackingOrderInfo.querySelector('h3')?.textContent === orderId) {
+                    // Update driver position dynamically without full reload
+                    const driverMarker = document.querySelector('.driver-marker');
+                    if (driverMarker) {
+                        driverMarker.style.left = orders[orderIndex].driverLocation.progress + '%';
+                        const progressSpan = driverMarker.querySelector('.driver-info span');
+                        if (progressSpan) {
+                            progressSpan.textContent = Math.round(orders[orderIndex].driverLocation.progress) + '% complete';
+                        }
+                    }
+                }
+            }
+            
+            // Refresh order cards if on orders section
+            const ordersSection = document.getElementById('orders-section');
+            if (ordersSection && ordersSection.classList.contains('active')) {
+                renderOrders();
+            }
+        }
+    }, 1000); // Update every second
 }
 
 // Cancel Order (only for pending orders)
