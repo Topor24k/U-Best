@@ -130,10 +130,10 @@ function clearCart() {
 function updateCartBadge() {
     const cart = getCart();
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const badges = document.querySelectorAll('.cart-badge');
+    const badges = document.querySelectorAll('.cart-badge, .cart-count');
     badges.forEach(badge => {
         badge.textContent = totalItems;
-        badge.style.display = totalItems > 0 ? 'inline-block' : 'none';
+        badge.style.display = 'flex';
     });
 }
 

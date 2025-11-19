@@ -18,8 +18,8 @@
 <body>
     <!-- Dashboard Header -->
     <header class="dashboard-header">
-        <div class="header-container">
-            <div class="header-left">
+        <div class="container header-content">
+            <div class="header-left-section">
                 <button class="sidebar-toggle" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -29,40 +29,37 @@
                 </div>
             </div>
             
-            <div class="header-search">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search products..." id="headerSearch">
+            <div class="search-bar">
+                <input type="text" id="headerSearch" placeholder="Search for products, equipment, supplies...">
+                <button type="button" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
             
             <div class="header-actions">
-                <button class="header-icon-btn" id="headerFavoritesBtn">
+                <button class="favorite-btn" id="headerFavoritesBtn">
                     <i class="fas fa-heart"></i>
-                    <span class="icon-badge wishlist-badge">0</span>
+                    <span class="favorite-count wishlist-badge">0</span>
                 </button>
-                <button class="header-icon-btn" id="headerCartBtn">
+                <button class="cart-btn" id="headerCartBtn">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="icon-badge cart-badge">0</span>
+                    <span class="cart-count cart-badge">0</span>
                 </button>
-                <button class="header-icon-btn" id="headerNotificationsBtn">
+                <button class="notification-btn" id="headerNotificationsBtn">
                     <i class="fas fa-bell"></i>
-                    <span class="icon-badge notification-badge">0</span>
+                    <span class="notification-count notification-badge">0</span>
                 </button>
-                <div class="user-menu">
-                    <button class="user-menu-btn" id="userMenuBtn">
-                        <div class="user-avatar">
-                            <i class="fas fa-user-circle"></i>
-                        </div>
-                        <div class="user-info">
-                            <span class="user-name" id="headerUserName">Guest User</span>
-                            <span class="user-role">Customer</span>
-                        </div>
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="index.html" class="dropdown-item" id="signOutLink">
-                            <i class="fas fa-sign-out-alt"></i> Sign Out
-                        </a>
+                <button class="auth-btn" id="userMenuBtn">
+                    <i class="fas fa-user-circle"></i>
+                    <div class="auth-text">
+                        <span class="auth-greeting" id="headerUserName">Guest User</span>
+                        <span class="auth-action">Customer</span>
                     </div>
+                </button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="index.html" class="dropdown-item" id="signOutLink">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
                 </div>
             </div>
         </div>
@@ -275,6 +272,10 @@
                 <a href="#orders" class="nav-item" data-section="orders">
                     <i class="fas fa-shopping-bag"></i>
                     <span>My Orders</span>
+                </a>
+                <a href="#repair" class="nav-item" data-section="repair">
+                    <i class="fas fa-tools"></i>
+                    <span>Repair / Customize</span>
                 </a>
                 <a href="#profile" class="nav-item has-submenu" data-section="profile" id="profileToggle">
                     <i class="fas fa-user"></i>
@@ -498,7 +499,8 @@
                         </div>
                         <h3>Baking Machines & Bakery Equipment</h3>
                         <p>Industrial ovens, mixers, dough sheeters, and professional baking machines for commercial use.</p>
-                        <span class="item-count">25 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="preparation-tools">
@@ -507,7 +509,8 @@
                         </div>
                         <h3>Preparation & Processing Tools</h3>
                         <p>Cutting boards, knives, food processors, and essential tools for efficient food preparation.</p>
-                        <span class="item-count">18 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="measuring-tools">
@@ -516,7 +519,8 @@
                         </div>
                         <h3>Measuring & Weighing Tools</h3>
                         <p>Digital scales, measuring cups, thermometers, and precision tools for accurate baking.</p>
-                        <span class="item-count">12 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="gas-power">
@@ -525,7 +529,8 @@
                         </div>
                         <h3>Gas & Power Supply</h3>
                         <p>LPG tanks, regulators, gas stoves, and reliable power equipment for your bakery operations.</p>
-                        <span class="item-count">8 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="trays-storage">
@@ -534,7 +539,8 @@
                         </div>
                         <h3>Baking Trays & Storage</h3>
                         <p>Sheet pans, cooling racks, storage containers, and organization solutions for your bakery.</p>
-                        <span class="item-count">22 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="utensils">
@@ -543,7 +549,8 @@
                         </div>
                         <h3>Utensils & Accessories</h3>
                         <p>Spatulas, whisks, piping bags, decorating tools, and essential bakery accessories.</p>
-                        <span class="item-count">35 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="ingredients">
@@ -552,7 +559,8 @@
                         </div>
                         <h3>Ingredients & Raw Materials</h3>
                         <p>Premium flour, sugar, yeast, flavoring, and quality ingredients for perfect baking results.</p>
-                        <span class="item-count">42 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
 
                     <div class="category-card" data-category="cleaning">
@@ -561,7 +569,8 @@
                         </div>
                         <h3>Cleaning & Maintenance Tools</h3>
                         <p>Sanitizers, cleaning supplies, maintenance kits, and hygiene products for food safety.</p>
-                        <span class="item-count">16 items</span>
+                        <span class="item-count">0 items</span>
+                        <a href="#" class="category-link">Browse Products <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </div>
             </section>

@@ -138,12 +138,18 @@ a {
 /* ============================================
    MAIN HEADER - Luxury Minimal Design
    ============================================ */
-.main-header {
-    background: var(--white);
-    box-shadow: none;
+/* Header Wrapper - Makes both headers stick together */
+.header-wrapper {
     position: sticky;
     top: 0;
     z-index: 1000;
+    background: var(--white);
+}
+
+.main-header {
+    background: var(--white);
+    box-shadow: none;
+    position: relative;
     padding: 0;
     border-bottom: 1px solid var(--border-light);
 }
@@ -233,42 +239,6 @@ a {
     gap: 15px;
 }
 
-.cart-btn {
-    position: relative;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: 12px 16px;
-    border-radius: 0;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: var(--transition);
-    color: var(--text-dark);
-    height: 48px;
-    display: flex;
-    align-items: center;
-}
-
-.cart-btn:hover {
-    background: transparent;
-    border-bottom: 2px solid var(--primary-color);
-    color: var(--primary-color);
-}
-
-.cart-count {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    background: var(--primary-color);
-    color: var(--white);
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 6px;
-    border-radius: var(--radius-sm);
-    min-width: 18px;
-    text-align: center;
-}
-
 .auth-btn {
     display: flex;
     align-items: center;
@@ -322,9 +292,7 @@ a {
 .nav-header {
     background: var(--white);
     color: var(--text-dark);
-    position: sticky;
-    top: 71px;
-    z-index: 999;
+    position: relative;
     border-bottom: 1px solid var(--border-light);
 }
 

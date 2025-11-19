@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addSampleMessageNotification();
     loadWishlistSection();
     initAdvancedSearch();
+    updateCategoryItemCounts();
 });
 
 // Authentication Check
@@ -3272,7 +3273,23 @@ if (reviewsModal) {
 
 // Update Category Counts
 function updateCategoryCounts() {
-    const products = JSON.parse(localStorage.getItem('products')) || [];
+    // Prioritize localStorage products (actual shop inventory) over allProducts from products-data.js
+    let products = [];
+    
+    // Try to get from localStorage first
+    try {
+        const storedProducts = localStorage.getItem('products');
+        if (storedProducts) {
+            products = JSON.parse(storedProducts);
+        }
+    } catch (error) {
+        console.error('Error reading from localStorage:', error);
+    }
+    
+    // Fallback to allProducts if localStorage is empty
+    if (products.length === 0 && typeof allProducts !== 'undefined') {
+        products = allProducts;
+    }
     
     // Count products by category
     const categoryCounts = {};
@@ -3293,6 +3310,13 @@ function updateCategoryCounts() {
             itemCountElement.textContent = `${count} ${count === 1 ? 'item' : 'items'}`;
         }
     });
+    
+    console.log('Category counts updated:', categoryCounts);
+}
+
+// Alias for consistency
+function updateCategoryItemCounts() {
+    updateCategoryCounts();
 }
 
 // Console welcome message
