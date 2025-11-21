@@ -1329,3 +1329,74 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('beforeunload', () => {
     stopNewArrivalsRotation();
 });
+
+// ============================================
+// Repair Dropdown - Similar to About Us
+// ============================================
+const repairToggle = document.getElementById('repairToggle');
+const repairDropdown = document.querySelector('.repair-dropdown');
+let isRepairDropdownSticky = false;
+
+if (repairToggle && repairDropdown) {
+    // Click handler - makes it sticky
+    repairToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isRepairDropdownSticky = !isRepairDropdownSticky;
+        
+        if (isRepairDropdownSticky) {
+            repairDropdown.classList.add('active');
+        } else {
+            repairDropdown.classList.remove('active');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!repairDropdown.contains(e.target) && !repairToggle.contains(e.target)) {
+            isRepairDropdownSticky = false;
+            repairDropdown.classList.remove('active');
+        }
+    });
+    
+    // Prevent dropdown from closing when clicking inside it
+    repairDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+}
+
+// ============================================
+// Technicians Carousel Navigation
+// ============================================
+let currentSlide = 0;
+const slidesToShow = 4;
+
+function slideTechnicians(direction) {
+    const grid = document.querySelector('.technicians-grid');
+    if (!grid) return;
+    
+    const cards = grid.querySelectorAll('.technician-card');
+    const totalSlides = cards.length;
+    const maxSlide = totalSlides - slidesToShow;
+    
+    if (direction === 'next') {
+        currentSlide = currentSlide >= maxSlide ? 0 : currentSlide + 1;
+    } else {
+        currentSlide = currentSlide <= 0 ? maxSlide : currentSlide - 1;
+    }
+    
+    // Calculate the translate value
+    const cardWidth = cards[0].offsetWidth;
+    const gap = 20; // Gap between cards
+    const translateX = -(currentSlide * (cardWidth + gap));
+    
+    grid.style.transform = `translateX(${translateX}px)`;
+}
+
+// Initialize carousel
+document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.querySelector('.technicians-grid');
+    if (grid) {
+        grid.style.transition = 'transform 0.5s ease';
+    }
+});

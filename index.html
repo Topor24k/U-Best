@@ -49,7 +49,159 @@
                 <li><a href="#equipment"><i class="fas fa-industry"></i> Categories</a></li>
                 <li><a href="#deals"><i class="fas fa-tag"></i> Pautang Deals</a></li>
                 <li><a href="#new-arrivals"><i class="fas fa-star"></i> New Arrivals</a></li>
-                <li><a href="#repair"><i class="fas fa-tools"></i> Repair / Customize</a></li>
+                <li class="nav-item-dropdown">
+                    <a href="javascript:void(0)" id="repairToggle"><i class="fas fa-tools"></i> Repair / Customize <i class="fas fa-chevron-down"></i></a>
+                    <div class="about-dropdown repair-dropdown">
+                        <div class="about-dropdown-content">
+                            <div class="about-header">
+                                <i class="fas fa-tools"></i>
+                                <h3>Repair & Customization Services</h3>
+                                <p class="about-tagline">Expert care for your bakery equipment!</p>
+                            </div>
+                            
+                            <div class="about-body">
+                                <div class="about-section">
+                                    <h4><i class="fas fa-wrench"></i> Professional Repair Services</h4>
+                                    <p>With over <strong>10 years of experience</strong>, our certified technicians provide expert repair services for all types of bakery equipment. From ovens to mixers, we fix it all with quality parts and guaranteed workmanship.</p>
+                                </div>
+                                
+                                <div class="about-section">
+                                    <h4><i class="fas fa-cogs"></i> Custom Modifications</h4>
+                                    <p>Need equipment tailored to your specific needs? We offer custom modifications and fabrication services to help you optimize your bakery operations. Whether it's size adjustments, feature additions, or complete customization, we make it happen.</p>
+                                </div>
+                                
+                                <div class="about-section" style="grid-column: 1 / -1; padding: 30px 0 60px 0;">
+                                    <h4><i class="fas fa-user-cog"></i> Meet Our Technicians</h4>
+                                    <div class="technicians-carousel">
+                                        <button class="carousel-nav prev" onclick="slideTechnicians('prev')">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <div class="technicians-grid">
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Roberto Santos</h5>
+                                                <p class="tech-role">Lead Technician</p>
+                                                <p class="tech-specialty">Oven & Heating Systems</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Maria Reyes</h5>
+                                                <p class="tech-role">Senior Technician</p>
+                                                <p class="tech-specialty">Mixers & Processors</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Carlos Mendoza</h5>
+                                                <p class="tech-role">Customization Specialist</p>
+                                                <p class="tech-specialty">Custom Fabrication</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Elena Cruz</h5>
+                                                <p class="tech-role">Electrical Specialist</p>
+                                                <p class="tech-specialty">Wiring & Electronics</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Diego Torres</h5>
+                                                <p class="tech-role">Refrigeration Expert</p>
+                                                <p class="tech-specialty">Cooling Systems</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Sofia Ramirez</h5>
+                                                <p class="tech-role">Parts Specialist</p>
+                                                <p class="tech-specialty">Component Sourcing</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Marco Villanueva</h5>
+                                                <p class="tech-role">Hydraulic Specialist</p>
+                                                <p class="tech-specialty">Pressure Systems</p>
+                                            </div>
+                                            <div class="technician-card">
+                                                <div class="technician-image">
+                                                    <i class="fas fa-user-tie"></i>
+                                                </div>
+                                                <h5>Ana Santos</h5>
+                                                <p class="tech-role">Quality Control</p>
+                                                <p class="tech-specialty">Testing & Inspection</p>
+                                            </div>
+                                        </div>
+                                        <button class="carousel-nav next" onclick="slideTechnicians('next')">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="about-stats">
+                                        <div class="stat-item">
+                                            <i class="fas fa-wrench"></i>
+                                            <div class="stat-number">1000+</div>
+                                            <div class="stat-label">Repairs Completed</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <i class="fas fa-smile"></i>
+                                            <div class="stat-number">98%</div>
+                                            <div class="stat-label">Satisfaction Rate</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <i class="fas fa-clock"></i>
+                                            <div class="stat-number">24/7</div>
+                                            <div class="stat-label">Emergency Support</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <div class="stat-number">90 Days</div>
+                                            <div class="stat-label">Repair Warranty</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="service-features">
+                                        <div class="service-feature-item">
+                                            <i class="fas fa-certificate"></i>
+                                            <span>Factory-Trained & Certified</span>
+                                        </div>
+                                        <div class="service-feature-item">
+                                            <i class="fas fa-shield-alt"></i>
+                                            <span>90-Day Warranty</span>
+                                        </div>
+                                        <div class="service-feature-item">
+                                            <i class="fas fa-clock"></i>
+                                            <span>3-5 Days Turnaround</span>
+                                        </div>
+                                        <div class="service-feature-item">
+                                            <i class="fas fa-truck"></i>
+                                            <span>On-Site Service Available</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="about-cta">
+                                        <p><strong>Need Repair or Customization?</strong></p>
+                                        <p>Whether your equipment needs fixing or you want custom modifications, our expert technicians are ready to help. Fast service, quality work, guaranteed results!</p>
+                                        <div class="about-cta-buttons">
+                                            <a href="tel:+639497039472" class="btn-small btn-primary"><i class="fas fa-phone"></i> Call 0949 703 9472</a>
+                                            <a href="#help" class="btn-small btn-secondary"><i class="fas fa-envelope"></i> Request Service</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
                 <li><a href="#help"><i class="fas fa-question-circle"></i> Help Center</a></li>
                 <li class="nav-item-dropdown">
                     <a href="javascript:void(0)" id="aboutUsToggle"><i class="fas fa-info-circle"></i> About Us <i class="fas fa-chevron-down"></i></a>
